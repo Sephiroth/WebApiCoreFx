@@ -34,8 +34,8 @@ namespace WebApiCoreFx
             var builder = new ContainerBuilder();
             builder.Populate(services);
             builder.RegisterModule(new Evolution());
-            Assembly Service = Assembly.LoadFrom("LogicLayer");
-            Assembly IService = Assembly.LoadFrom("ILogicLayer");
+            Assembly Service = Assembly.Load("LogicLayer");
+            Assembly IService = Assembly.Load("ILogicLayer");
             builder.RegisterAssemblyTypes(IService, Service).AsImplementedInterfaces().Where(t => t.Name.EndsWith("Service"));
             //builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
             var Container = builder.Build();
