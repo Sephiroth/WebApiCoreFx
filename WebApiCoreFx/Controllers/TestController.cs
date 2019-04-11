@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DBLayer.DAL;
-using DBModel.Entity;
-using IDBLayer.Interface;
-using Microsoft.AspNetCore.Http;
+﻿using DBModel.Entity;
+using ILogicLayer.Interface;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace WebApiCoreFx.Controllers
 {
@@ -14,18 +9,23 @@ namespace WebApiCoreFx.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private IRepository<TbUser> rep;
+        private IUserService userServ;
 
-        public TestController(IRepository<TbUser> repo)
+        public TestController(IUserService userServ)
         {
-            rep = repo;
+            this.userServ = userServ;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<TbUser>> Get(string nickName)
         {
-            var list = rep.GetListAsync(w => w.Nickname.Equals(nickName));
-            return list.Result;
+            return userServ.Get(nickName);
+        }
+
+        [HttpPost]
+        public ActionResult<bool> Post([FromBody]List<TbUser> list)
+        {
+            return userServ.Add(list);
         }
     }
 }

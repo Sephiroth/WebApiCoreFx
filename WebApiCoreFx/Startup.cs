@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using DBModel.Entity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
+using System.Reflection;
 using WebApiCoreFx.Injection;
 
 namespace WebApiCoreFx
@@ -39,6 +34,9 @@ namespace WebApiCoreFx
             var builder = new ContainerBuilder();
             builder.Populate(services);
             builder.RegisterModule(new Evolution());
+            Assembly Service = Assembly.LoadFrom("LogicLayer");
+            Assembly IService = Assembly.LoadFrom("ILogicLayer");
+            builder.RegisterAssemblyTypes(IService, Service).AsImplementedInterfaces().Where(t => t.Name.EndsWith("Service"));
             //builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
             var Container = builder.Build();
             return new AutofacServiceProvider(Container);

@@ -16,7 +16,7 @@ namespace DBLayer.DAL
             using (var db = new db_cdzContext())
             {
                 await db.Set<T>().AddRangeAsync(t);
-                rs = true;
+                rs = db.SaveChanges() == t.Count;
             }
             return rs;
         }
@@ -29,7 +29,7 @@ namespace DBLayer.DAL
                  using (var db = new db_cdzContext())
                  {
                      db.Set<T>().RemoveRange(t);
-                     rs = true;
+                     rs = db.SaveChanges() == t.Count;
                  }
                  return rs;
              });
@@ -73,7 +73,7 @@ namespace DBLayer.DAL
                 using (var db = new db_cdzContext())
                 {
                     db.Set<T>().UpdateRange(list);
-                    rs = true;
+                    rs = db.SaveChanges() == list.Count;
                 }
                 return rs;
             });

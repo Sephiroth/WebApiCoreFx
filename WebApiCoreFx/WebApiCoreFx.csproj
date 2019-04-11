@@ -21,6 +21,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DBLayer\DBLayer.csproj" />
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
+    <ProjectReference Include="..\ILogicLayer\ILogicLayer.csproj" />
+    <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
   </ItemGroup>
 
 </Project>
