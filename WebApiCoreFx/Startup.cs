@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -43,6 +44,7 @@ namespace WebApiCoreFx
                     options.Filters.Add<HttpGlobalExceptionFilter>();
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSession();
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -74,7 +76,23 @@ namespace WebApiCoreFx
             }
 
             app.UseHttpsRedirection();
+            // 放在useMvc前，否则报错
+            app.UseSession();
+            app.UseMvcWithDefaultRoute(); 
             app.UseMvc();
+            //app.UseStaticFiles(); //使用静态文件
+
+            // 设置文件上传保存路径
+            string fileUploadPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadFiles");
+            if (!Directory.Exists(fileUploadPath))
+            {
+                Directory.CreateDirectory(fileUploadPath);
+            }
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(fileUploadPath),
+                RequestPath = "/UploadFiles"
+            });
         }
     }
 }
