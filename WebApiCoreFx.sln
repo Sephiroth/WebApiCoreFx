@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IDBLayer", "IDBLayer\IDBLay
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBModel", "DBModel\DBModel.csproj", "{2AC512A4-E77D-49CF-A7FD-C62EF6AE0BA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILogicLayer", "ILogicLayer\ILogicLayer.csproj", "{54B0F8F7-AE25-4640-B325-ABDA6DD0B6CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ILogicLayer", "ILogicLayer\ILogicLayer.csproj", "{54B0F8F7-AE25-4640-B325-ABDA6DD0B6CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicLayer", "LogicLayer\LogicLayer.csproj", "{CE882FD3-88F5-4E24-8338-BB6FDDB64913}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicLayer", "LogicLayer\LogicLayer.csproj", "{CE882FD3-88F5-4E24-8338-BB6FDDB64913}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreDemo", "AspNetCoreDemo\AspNetCoreDemo.csproj", "{A97A2383-4173-405E-AB73-20A4260B7B0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{CE882FD3-88F5-4E24-8338-BB6FDDB64913}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE882FD3-88F5-4E24-8338-BB6FDDB64913}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE882FD3-88F5-4E24-8338-BB6FDDB64913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A97A2383-4173-405E-AB73-20A4260B7B0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A97A2383-4173-405E-AB73-20A4260B7B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A97A2383-4173-405E-AB73-20A4260B7B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A97A2383-4173-405E-AB73-20A4260B7B0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

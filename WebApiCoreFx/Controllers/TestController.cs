@@ -1,6 +1,7 @@
 ﻿using DBModel.Entity;
 using ILogicLayer.Interface;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace WebApiCoreFx.Controllers
@@ -19,6 +20,8 @@ namespace WebApiCoreFx.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<TbUser>> Get(string nickName)
         {
+            string ss = "sss";
+            int a = Convert.ToInt32(ss);
             return userServ.Get(nickName);
         }
 

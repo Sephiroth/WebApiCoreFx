@@ -1,22 +1,31 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using log4net;
+using log4net.Config;
+using log4net.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using WebApiCoreFx.Filter;
 using WebApiCoreFx.Injection;
 
 namespace WebApiCoreFx
 {
     public class Startup
     {
+        public static ILoggerRepository repository { get; set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            repository = LogManager.CreateRepository("NETCoreRepository");
+            XmlConfigurator.Configure(repository, new FileInfo("Log4net.config"));
         }
 
         public IConfiguration Configuration { get; }
@@ -29,7 +38,11 @@ namespace WebApiCoreFx
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add<HttpGlobalExceptionFilter>();
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
