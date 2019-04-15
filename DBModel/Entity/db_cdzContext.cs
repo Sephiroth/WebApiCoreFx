@@ -1,9 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 namespace DBModel.Entity
 {
     public partial class db_cdzContext : DbContext
     {
+        /// <summary>
+        /// dbContext连接字符串
+        /// </summary>
+        public static string DbConnStr;
+        static db_cdzContext()
+        {
+        }
+
         public db_cdzContext()
         {
         }
@@ -46,7 +55,7 @@ namespace DBModel.Entity
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=localhost;uid=root;pwd=123456;database=db_cdz");
+                optionsBuilder.UseMySql(DbConnStr);
             }
         }
 

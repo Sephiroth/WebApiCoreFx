@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using DBModel.Entity;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
@@ -25,6 +26,7 @@ namespace WebApiCoreFx
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            db_cdzContext.DbConnStr = Configuration["AppSetting:DbConnStr"];
             repository = LogManager.CreateRepository("NETCoreRepository");
             XmlConfigurator.Configure(repository, new FileInfo("Log4net.config"));
         }
@@ -78,7 +80,7 @@ namespace WebApiCoreFx
             app.UseHttpsRedirection();
             // 放在useMvc前，否则报错
             app.UseSession();
-            app.UseMvcWithDefaultRoute(); 
+            app.UseMvcWithDefaultRoute();
             app.UseMvc();
             //app.UseStaticFiles(); //使用静态文件
 
