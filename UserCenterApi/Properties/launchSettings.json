@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5994",
-      "sslPort": 44335
+      "applicationUrl": "http://localhost:10011",
+      "sslPort": 44333
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
@@ -12,12 +12,12 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/UserTest",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "WebApiCoreFx": {
+    "UserCenterApi": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/values",

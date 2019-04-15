@@ -20,8 +20,8 @@ namespace WebApiCoreFx.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<TbUser>> Get(string nickName)
         {
-            string ss = "sss";
-            int a = Convert.ToInt32(ss);
+            //string ss = "sss";
+            //int a = Convert.ToInt32(ss);
             return userServ.Get(nickName);
         }
 

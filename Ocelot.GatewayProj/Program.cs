@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace WebApiCoreFx
+namespace Ocelot.GatewayProj
 {
     public class Program
     {
@@ -19,7 +19,12 @@ namespace WebApiCoreFx
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseUrls("https://localhost:10010")
+            .ConfigureAppConfiguration((context, builder) =>
+            {
+                builder.SetBasePath(context.HostingEnvironment.ContentRootPath)
+                .AddJsonFile("Ocelot.json");
+            })
+            .UseUrls("https://localhost:10000", "https://localhost:10001")
             .UseStartup<Startup>();
     }
 }

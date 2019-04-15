@@ -14,7 +14,7 @@ namespace AspNetCoreDemo.Controllers
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
-            throw new System.Exception("testException");
+            //throw new System.Exception("testException");
             return View();
         }
 

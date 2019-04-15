@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace WebApiCoreFx
+namespace UserCenterApi
 {
     public class Program
     {
@@ -19,7 +19,7 @@ namespace WebApiCoreFx
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseUrls("https://localhost:10010")
+            .UseUrls("https://localhost:10011")
             .UseStartup<Startup>();
     }
 }

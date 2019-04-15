@@ -1,0 +1,39 @@
+{
+  "ReRoutes": [
+    {
+      "UpstreamPathTemplate": "/api/{controller}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/{controller}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "host": "localhost",
+          "port": 10010
+        },
+        {
+          "host": "localhost",
+          "port": 10011
+        }
+      ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+      //,
+      //"QoSOptions": {
+      //  "ExceptionsAllowedBeforeBreaking": 3,
+      //  "DurationOfBreak": 5,
+      //  "TimeoutValue": 5000
+      //},
+      //"RateLimitOptions": {
+      //  "ClientWhitelist": [],
+      //  "EnableRateLimiting": true,
+      //  "Period": "1s",
+      //  "PeriodTimespan": 1,
+      //  "Limit": 1
+      //}
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:10000"
+  }
+}
