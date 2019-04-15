@@ -17,9 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicLayer", "LogicLayer\Lo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreDemo", "AspNetCoreDemo\AspNetCoreDemo.csproj", "{A97A2383-4173-405E-AB73-20A4260B7B0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ocelot.GatewayProj", "Ocelot.GatewayProj\Ocelot.GatewayProj.csproj", "{67A8E82B-6682-4EC8-B949-8D013FBB1A0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ocelot.GatewayProj", "Ocelot.GatewayProj\Ocelot.GatewayProj.csproj", "{67A8E82B-6682-4EC8-B949-8D013FBB1A0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserCenterApi", "UserCenterApi\UserCenterApi.csproj", "{B4376C45-A186-4257-9907-FFF639056678}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserCenterApi", "UserCenterApi\UserCenterApi.csproj", "{B4376C45-A186-4257-9907-FFF639056678}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surging.Services", "Surging.Services\Surging.Services.csproj", "{CAB3ABAC-DFB2-46DD-AE2C-8766D436C3E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{B4376C45-A186-4257-9907-FFF639056678}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4376C45-A186-4257-9907-FFF639056678}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4376C45-A186-4257-9907-FFF639056678}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAB3ABAC-DFB2-46DD-AE2C-8766D436C3E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB3ABAC-DFB2-46DD-AE2C-8766D436C3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB3ABAC-DFB2-46DD-AE2C-8766D436C3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB3ABAC-DFB2-46DD-AE2C-8766D436C3E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
