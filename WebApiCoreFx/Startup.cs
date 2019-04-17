@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using Alachisoft.NCache.Web.SessionState;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DBModel.Entity;
 using log4net;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -47,6 +49,16 @@ namespace WebApiCoreFx
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession();
+            // 配置启用NCache
+            services.AddNCacheSession(Configuration.GetSection("NCacheSessions")); // 等效于下一行
+            //services.AddNCacheSession(configuration =>
+            //{
+            //    configuration.CacheName = "mySessionCache";
+            //    configuration.EnableLogs = true;
+            //    configuration.SessionAppId = "NCacheSessionApp";
+            //    configuration.SessionOptions.IdleTimeout = 5;
+            //    configuration.SessionOptions.CookieName = "AspNetCore.Session";
+            //});
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -66,8 +78,11 @@ namespace WebApiCoreFx
         //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -81,7 +96,12 @@ namespace WebApiCoreFx
             // 放在useMvc前，否则报错
             app.UseSession();
             app.UseMvcWithDefaultRoute();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=myApp}/{action=Index}/{id?}");
+            });
             //app.UseStaticFiles(); //使用静态文件
 
             // 设置文件上传保存路径
