@@ -1,5 +1,6 @@
 ﻿using DBModel.Entity;
 using ILogicLayer.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ namespace WebApiCoreFx.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TestController : ControllerBase
     {
         private IUserService userServ;

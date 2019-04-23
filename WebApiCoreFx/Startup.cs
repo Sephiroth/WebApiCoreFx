@@ -2,9 +2,11 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DBModel.Entity;
+using IdentityModel;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +14,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using WebApiCoreFx.Filter;
 using WebApiCoreFx.Injection;
 
@@ -23,6 +27,8 @@ namespace WebApiCoreFx
 {
     public class Startup
     {
+        public static SymmetricSecurityKey symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("need_to_get_this_from_enviroment"));
+
         public static ILoggerRepository repository { get; set; }
 
         public Startup(IConfiguration configuration)
@@ -43,6 +49,19 @@ namespace WebApiCoreFx
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(o =>
+                {
+                    o.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        NameClaimType = JwtClaimTypes.Name,
+                        RoleClaimType = JwtClaimTypes.Role,
+                        ValidIssuer = "YFAPICommomCore",
+                        ValidAudience = "api",
+                        IssuerSigningKey = symmetricKey
+                    };
+                });
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<HttpGlobalExceptionFilter>();
@@ -91,10 +110,10 @@ namespace WebApiCoreFx
             {
                 app.UseHsts();
             }
-
-            app.UseHttpsRedirection();
             // 放在useMvc前，否则报错
             app.UseSession();
+            app.UseAuthentication();
+            app.UseHttpsRedirection();
             app.UseMvcWithDefaultRoute();
             app.UseMvc(routes =>
             {
