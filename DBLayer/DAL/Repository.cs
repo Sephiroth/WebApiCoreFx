@@ -16,23 +16,30 @@ namespace DBLayer.DAL
             using (var db = new db_cdzContext())
             {
                 await db.Set<T>().AddRangeAsync(t);
-                rs = db.SaveChanges() == t.Count;
+                rs = await db.SaveChangesAsync() == t.Count;
             }
             return rs;
         }
 
         public async Task<bool> DeleteAsync(List<T> t)
         {
-            return await Task.Run(() =>
-             {
-                 bool rs = false;
-                 using (var db = new db_cdzContext())
-                 {
-                     db.Set<T>().RemoveRange(t);
-                     rs = db.SaveChanges() == t.Count;
-                 }
-                 return rs;
-             });
+            bool rs = false;
+            using (var db = new db_cdzContext())
+            {
+                db.Set<T>().RemoveRange(t);
+                rs = await db.SaveChangesAsync() == t.Count;
+            }
+            return rs;
+            //return await Task.Run(() =>
+            // {
+            //     bool rs = false;
+            //     using (var db = new db_cdzContext())
+            //     {
+            //         db.Set<T>().RemoveRange(t);
+            //         rs = db.SaveChanges() == t.Count;
+            //     }
+            //     return rs;
+            // });
         }
 
         public async Task<T> GetEntityAsync(Expression<Func<T, bool>> predicate)
@@ -67,16 +74,23 @@ namespace DBLayer.DAL
 
         public async Task<bool> ModifyAsync(List<T> list)
         {
-            return await Task.Run(() =>
+            bool rs = false;
+            using (var db = new db_cdzContext())
             {
-                bool rs = false;
-                using (var db = new db_cdzContext())
-                {
-                    db.Set<T>().UpdateRange(list);
-                    rs = db.SaveChanges() == list.Count;
-                }
-                return rs;
-            });
+                db.Set<T>().UpdateRange(list);
+                rs = await db.SaveChangesAsync() == list.Count;
+            }
+            return rs;
+            //return await Task.Run(() =>
+            //{
+            //    bool rs = false;
+            //    using (var db = new db_cdzContext())
+            //    {
+            //        db.Set<T>().UpdateRange(list);
+            //        rs = db.SaveChanges() == list.Count;
+            //    }
+            //    return rs;
+            //});
         }
     }
 }
