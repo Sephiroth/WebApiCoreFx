@@ -114,6 +114,12 @@ namespace WebApiCoreFx
             app.UseSession();
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            //添加访问静态文件
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(AppDomain.CurrentDomain.BaseDirectory),
+                RequestPath = @"/StaticFiles"
+            });
             app.UseMvcWithDefaultRoute();
             app.UseMvc(routes =>
             {
