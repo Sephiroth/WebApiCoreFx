@@ -15,16 +15,14 @@ namespace LogicLayer.Service
             rep = repo;
         }
 
-        public bool Add(List<TbUser> list)
+        public async Task<bool> AddAsync(List<TbUser> list)
         {
-            Task<bool> t = rep.AddListAsync(list);
-            return t.Result;
+            return await rep.AddListAsync(list);
         }
 
-        public List<TbUser> Get(string nickName)
+        public async Task<List<TbUser>> GetAsync(string nickName)
         {
-            var list = rep.GetListAsync(w => w.Nickname.Equals(nickName));
-            return list.Result;
+            return await rep.GetListAsync(w => w.Nickname.Equals(nickName));
         }
     }
 }

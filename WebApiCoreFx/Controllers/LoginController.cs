@@ -11,7 +11,7 @@ namespace WebApiCoreFx.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        [HttpPost("login")]
+        [HttpPost]
         public IActionResult Authenticate()
         {
             var tokenHandler = new JwtSecurityTokenHandler();

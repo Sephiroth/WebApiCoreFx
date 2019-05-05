@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
@@ -20,17 +21,17 @@ namespace WebApiCoreFx.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TbUser>> Get(string nickName)
+        public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)
         {
             //string ss = "sss";
             //int a = Convert.ToInt32(ss);
-            return userServ.Get(nickName);
+            return await userServ.GetAsync(nickName);
         }
 
         [HttpPost]
-        public ActionResult<bool> Post([FromBody]List<TbUser> list)
+        public async Task<ActionResult<bool>> Post([FromBody]List<TbUser> list)
         {
-            return userServ.Add(list);
+            return await userServ.AddAsync(list);
         }
     }
 }

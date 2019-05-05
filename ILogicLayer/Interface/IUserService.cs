@@ -1,12 +1,13 @@
 ﻿using DBModel.Entity;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ILogicLayer.Interface
 {
     public interface IUserService
     {
-        bool Add(List<TbUser> list);
+        async Task<bool> AddAsync(List<TbUser> list);
 
-        List<TbUser> Get(string nickName);
+        Task<List<TbUser>> GetAsync(string nickName);
     }
 }
