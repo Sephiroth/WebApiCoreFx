@@ -79,6 +79,28 @@ namespace WebApiCoreFx
             //    configuration.SessionOptions.CookieName = "AspNetCore.Session";
             //});
 
+            services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("Version1", new Swashbuckle.AspNetCore.Swagger.Info()
+                {
+                    Version = "Version1",
+                    Title = "Asp.Net Core WebAPI HelpPage",
+                    TermsOfService = "None",
+                    Contact = new Swashbuckle.AspNetCore.Swagger.Contact()
+                    {
+                        Name = "",
+                        Email = "",
+                        Url = ""
+                    },
+                    License = new Swashbuckle.AspNetCore.Swagger.License()
+                    {
+                        Name = "",
+                        Url = ""
+                    }
+                });
+                option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
+            });
+
             var builder = new ContainerBuilder();
             builder.Populate(services);
             builder.RegisterModule(new Evolution());
@@ -121,6 +143,11 @@ namespace WebApiCoreFx
                 RequestPath = @"/StaticFiles"
             });
             app.UseMvcWithDefaultRoute();
+            app.UseSwagger();
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
