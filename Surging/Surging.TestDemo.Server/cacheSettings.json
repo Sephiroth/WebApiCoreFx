@@ -1,0 +1,56 @@
+{
+  "CachingSettings": [
+    {
+      "Id": "ddlCache",
+      "Class": "Surging.Core.Caching.RedisCache.RedisContext,Surging.Core.Caching",
+      "Properties": [
+        {
+          "Name": "appRuleFile",
+          "Ref": "rule"
+        },
+        {
+          "Name": "dataContextPool",
+          "Ref": "ddls_sample",
+          "Maps": [
+            {
+              "Name": "Redis",
+              "Properties": [
+                {
+                  "value": "127.0.0.1:6379::1"
+                }
+              ]
+            },
+            {
+              "Name": "MemoryCache"
+            }
+          ]
+        },
+        {
+          "Name": "defaultExpireTime",
+          "value": "120"
+        },
+        {
+          "Name": "connectTimeout",
+          "Value": "120"
+        },
+        {
+          "Name": "minSize",
+          "Value": "1"
+        },
+        {
+          "Name": "maxSize",
+          "Value": "10"
+        }
+      ]
+    }
+  ]
+  // 配置Memcached集群的服务器ip,port
+  //"MemCachedServerConfig": [
+  //  {
+  //    "IP": "127.0.0.1",
+  //    "Port": "11211"
+  //  }
+  //],
+  //"MemCachedPoolName": "MemcachedPool",
+  //"JwtExpire": "30" // token有效时间
+}
