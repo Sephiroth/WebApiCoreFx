@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 namespace Surging.TestDemo.IModuleService
 {
     /// <summary>
-    /// 
+    /// 基于sqlSugar接口
     /// </summary>
     [ServiceBundle("api/{Service}")]
-    public interface IUserService : IServiceKey
+    public interface IUserssService : IServiceKey
     {
-        /// <summary>
-        /// SayHello
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        [Service(Name = "SayHello", Date = "2019-08-30", Director = "Sephiroth")]
-        Task<string> SayHello(string name);
-
         /// <summary>
         /// 获取用户
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [Service(Name = "GetUserAsync", Date = "2019-08-30", Director = "lutao")]
-        Task<User> GetUserAsync(string name);
+        [Service(Name = "获取用户", Date = "2019-08-30", Director = "lutao")]
+        Task<User> GetEntity(int id);
+
+        /// <summary>
+        /// 新增用户
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        [Service(Name = "新增用户", Date = "2019-08-30", Director = "lutao")]
+        Task<bool> AddUser(User u);
     }
 }

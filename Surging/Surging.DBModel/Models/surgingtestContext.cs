@@ -2,13 +2,13 @@
 
 namespace Surging.DBModel.Models
 {
-    public partial class surgingtestContext : DbContext
+    public partial class SurgingtestContext : DbContext
     {
         public static string DbConnStr;
 
-        public surgingtestContext() { }
+        public SurgingtestContext() { }
 
-        public surgingtestContext(DbContextOptions<surgingtestContext> options) : base(options) { }
+        public SurgingtestContext(DbContextOptions<SurgingtestContext> options) : base(options) { }
 
         public virtual DbSet<User> User { get; set; }
 
@@ -17,7 +17,7 @@ namespace Surging.DBModel.Models
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql(DbConnStr);//"server=127.0.0.1;uid=root;pwd=123456;database=surgingtest"
+                optionsBuilder.UseMySQL(DbConnStr);
             }
         }
 

@@ -2,7 +2,7 @@
   "Surging": {
     "Ip": "${Surging_Server_IP}|127.0.0.1",
     "WatchInterval": 30,
-    "Port": "${Surging_Server_Port}|902",
+    "Port": "${Surging_Server_Port}|10086",
     "MappingIp": "${Mapping_ip}",
     "MappingPort": "${Mapping_Port}",
     "Token": "true",
@@ -11,7 +11,7 @@
     "Protocol": "${Protocol}|None", //Http¡¢Tcp¡¢None
     "RootPath": "${RootPath}|D:\\userapp",
     "Ports": {
-      "HttpPort": "${HttpPort}|10010",
+      "HttpPort": "${HttpPort}|10087",
       "WSPort": "${WSPort}|22963"
     },
     "RequestCacheEnabled": false,
@@ -87,6 +87,6 @@
   },
   "ConnectionStrings": {
     //"SqlServerStr": "${SqlServerStr}|Server=.;Database=test;User ID=sa;Password=S1a2;Trusted_Connection=False;",
-    "MySqlStr": "${MySqlStr}|server=127.0.0.1;database=surgingtest;uid=root;pwd=123456;"
+    "MySqlStr": "${MySqlStr}|server=127.0.0.1;database=test;uid=root;pwd=123456;MinPoolSize=3;MaxPoolSize=30;TreatTinyAsBoolean=false;" //TreatTinyAsBoolean=false;
   }
 }

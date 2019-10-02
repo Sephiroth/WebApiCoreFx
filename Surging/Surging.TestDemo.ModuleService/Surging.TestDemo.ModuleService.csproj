@@ -1,13 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Surging.DBModel\Surging.DBModel.csproj" />
-    <ProjectReference Include="..\Surging.DbRepository\Surging.DbRepository.csproj" />
-    <ProjectReference Include="..\Surging.IDbRepository\Surging.IDbRepository.csproj" />
+    <ProjectReference Include="..\Surging.DbRepository\Surging.EFCore.DbRepository.csproj" />
+    <ProjectReference Include="..\Surging.SqlSugar.DbRepository\Surging.SqlSugar.DbRepository.csproj" />
     <ProjectReference Include="..\Surging.TestDemo.IModuleService\Surging.TestDemo.IModuleService.csproj" />
   </ItemGroup>
 

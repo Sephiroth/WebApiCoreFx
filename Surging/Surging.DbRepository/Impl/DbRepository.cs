@@ -5,7 +5,6 @@ using Surging.IDepository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Surging.DbRepository.Impl
@@ -15,7 +14,7 @@ namespace Surging.DbRepository.Impl
         public async Task<bool> AddEntityAsync(T t)
         {
             bool rs = false;
-            using (var db = new surgingtestContext())
+            using (var db = new SurgingtestContext())
             {
                 await db.Set<T>().AddAsync(t);
                 rs = await db.SaveChangesAsync() == 1;
@@ -26,7 +25,7 @@ namespace Surging.DbRepository.Impl
         public async Task<bool> AddListAsync(List<T> t)
         {
             bool rs = false;
-            using (var db = new surgingtestContext())
+            using (var db = new SurgingtestContext())
             {
                 await db.Set<T>().AddRangeAsync(t);
                 rs = await db.SaveChangesAsync() == t.Count;
@@ -37,7 +36,7 @@ namespace Surging.DbRepository.Impl
         public async Task<bool> DeleteAsync(List<T> t)
         {
             bool rs = false;
-            using (var db = new surgingtestContext())
+            using (var db = new SurgingtestContext())
             {
                 db.Set<T>().RemoveRange(t);
                 rs = await db.SaveChangesAsync() == t.Count;
@@ -50,7 +49,7 @@ namespace Surging.DbRepository.Impl
             return await Task.Factory.StartNew(() =>
             {
                 int rs;
-                using (var db = new surgingtestContext())
+                using (var db = new SurgingtestContext())
                 {
                     rs = db.Database.ExecuteSqlCommand(sql);
                 }
@@ -63,7 +62,7 @@ namespace Surging.DbRepository.Impl
             return await Task.Run(() =>
             {
                 T obj = null;
-                using (var db = new surgingtestContext())
+                using (var db = new SurgingtestContext())
                 {
                     obj = db.Set<T>().Where(predicate).FirstOrDefault();
                 }
@@ -76,7 +75,7 @@ namespace Surging.DbRepository.Impl
             return await Task.Run(() =>
             {
                 List<T> obj = null;
-                using (var db = new surgingtestContext())
+                using (var db = new SurgingtestContext())
                 {
                     var rs = db.Set<T>().Where(predicate).OrderByDescending(key).Skip(firstRow).Take(pageSize);
                     if (rs.Count() > 0)
@@ -91,7 +90,7 @@ namespace Surging.DbRepository.Impl
         public async Task<bool> ModifyEntityAsync(T t)
         {
             bool rs = false;
-            using (var db = new surgingtestContext())
+            using (var db = new SurgingtestContext())
             {
                 db.Set<T>().Update(t);
                 rs = await db.SaveChangesAsync() == 1;
@@ -102,7 +101,7 @@ namespace Surging.DbRepository.Impl
         public async Task<bool> ModifyListAsync(List<T> list)
         {
             bool rs = false;
-            using (var db = new surgingtestContext())
+            using (var db = new SurgingtestContext())
             {
                 db.Set<T>().UpdateRange(list);
                 rs = await db.SaveChangesAsync() == list.Count;
@@ -115,7 +114,7 @@ namespace Surging.DbRepository.Impl
             return await Task.Factory.StartNew(() =>
             {
                 List<T> list = null;
-                using (var db = new surgingtestContext())
+                using (var db = new SurgingtestContext())
                 {
                     IQueryable<T> rs = db.Set<T>().FromSql(sql);
                     list = rs.ToList();

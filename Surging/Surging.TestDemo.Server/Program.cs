@@ -4,10 +4,12 @@ using Surging.Core.Caching.Configurations;
 using Surging.Core.CPlatform;
 using Surging.Core.CPlatform.Configurations;
 using Surging.Core.CPlatform.Utilities;
+using Surging.Core.Log4net;
 using Surging.Core.ProxyGenerator;
 using Surging.Core.ServiceHosting;
 using Surging.Core.ServiceHosting.Internal.Implementation;
 using Surging.DBModel.Models;
+using Surging.EFCore.DBModel.SqlSugar;
 using System;
 using System.Text;
 
@@ -48,12 +50,14 @@ namespace Surging.TestDemo.Server
                //.UseLog4net(LogLevel.Error) //使用log4net记录日志
                //.UseNLog(LogLevel.Error, "NLog.config")
                .UseConsoleLifetime()
+               .UseLog4net()
                .Configure(build => build.AddCacheFile("${cachepath}|cacheSettings.json", optional: false, reloadOnChange: true))
                .Configure(build => build.AddCPlatformFile("${surgingpath}|surgingSettings.json", optional: false, reloadOnChange: true))
                .UseStartup<Startup>()
                .Build();
             //在启动的时候吧连接字符串赋值
-            surgingtestContext.DbConnStr = Surging.Core.CPlatform.AppConfig.GetSection("ConnectionStrings").GetSection("MySqlStr").Value;
+            SurgingtestContext.DbConnStr = Surging.Core.CPlatform.AppConfig.GetSection("ConnectionStrings").GetSection("MySqlStr").Value;
+            SqlClient.ConnectionString = Surging.Core.CPlatform.AppConfig.GetSection("ConnectionStrings").GetSection("MySqlStr").Value;
             using (host.Run())
             {
                 Console.WriteLine($"Surging.TestDemo服务端启动成功,{DateTime.Now}");

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="surging" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Surging.DBModel\Surging.DBModel.csproj" />
     <ProjectReference Include="..\Surging.IDbRepository\Surging.IDbRepository.csproj" />
   </ItemGroup>

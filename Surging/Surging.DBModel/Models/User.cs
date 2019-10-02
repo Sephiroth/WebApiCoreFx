@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SqlSugar;
 
 namespace Surging.DBModel.Models
 {
     public partial class User
     {
+        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]//标识是否为主键
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

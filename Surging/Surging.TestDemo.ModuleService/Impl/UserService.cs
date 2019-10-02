@@ -1,12 +1,11 @@
 ﻿using Surging.Core.CPlatform.Ioc;
 using Surging.Core.ProxyGenerator;
 using Surging.DBModel.Models;
-using Surging.IDepository.Interface;
-using Surging.TestDemo.IModuleService.Interface;
+using Surging.TestDemo.IModuleService;
 using Surging.TestDemo.ModuleService.Repository;
 using System.Threading.Tasks;
 
-namespace Surging.TestDemo.ModuleService.Impl
+namespace Surging.TestDemo.ModuleService
 {
     [ModuleName("User")]
     public class UserService : ProxyServiceBase, IUserService

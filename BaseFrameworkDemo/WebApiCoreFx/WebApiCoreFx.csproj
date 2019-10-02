@@ -22,8 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alachisoft.NCache.SDK" Version="4.9.1.1" />
-    <PackageReference Include="Alachisoft.NCache.SessionServices" Version="4.9.1" />
+    <!--<PackageReference Include="Alachisoft.NCache.SessionServices" Version="4.8.0" />-->
     <PackageReference Include="Autofac" Version="4.9.1" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.1.0" />

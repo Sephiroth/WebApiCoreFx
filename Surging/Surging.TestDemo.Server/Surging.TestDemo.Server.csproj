@@ -30,8 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Surging.DBModel\Surging.DBModel.csproj" />
-    <ProjectReference Include="..\Surging.DbRepository\Surging.DbRepository.csproj" />
     <ProjectReference Include="..\Surging.TestDemo.ModuleService\Surging.TestDemo.ModuleService.csproj" />
   </ItemGroup>
 

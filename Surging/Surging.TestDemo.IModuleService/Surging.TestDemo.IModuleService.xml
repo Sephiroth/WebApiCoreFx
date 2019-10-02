@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Surging.TestDemo.IModuleService</name>
+    </assembly>
+    <members>
+        <member name="T:Surging.TestDemo.IModuleService.IUserssService">
+            <summary>
+            基于sqlSugar接口
+            </summary>
+        </member>
+        <member name="M:Surging.TestDemo.IModuleService.IUserssService.GetEntity(System.Int32)">
+            <summary>
+            获取用户
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Surging.TestDemo.IModuleService.IUserssService.AddUser(Surging.DBModel.Models.User)">
+            <summary>
+            新增用户
+            </summary>
+            <param name="u"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Surging.TestDemo.IModuleService.IUserService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Surging.TestDemo.IModuleService.IUserService.SayHello(System.String)">
+            <summary>
+            SayHello
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Surging.TestDemo.IModuleService.IUserService.GetUserAsync(System.String)">
+            <summary>
+            获取用户
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

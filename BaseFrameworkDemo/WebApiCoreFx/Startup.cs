@@ -1,4 +1,4 @@
-﻿using Alachisoft.NCache.Web.SessionState;
+﻿//using Alachisoft.NCache.Web.SessionState;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DBModel.Entity;
@@ -69,7 +69,7 @@ namespace WebApiCoreFx
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession();
             // 配置启用NCache
-            services.AddNCacheSession(Configuration.GetSection("NCacheSessions")); // 等效于下一行
+            //services.AddNCacheSession(Configuration.GetSection("NCacheSessions")); // 等效于下一行
             //services.AddNCacheSession(configuration =>
             //{
             //    configuration.CacheName = "mySessionCache";
