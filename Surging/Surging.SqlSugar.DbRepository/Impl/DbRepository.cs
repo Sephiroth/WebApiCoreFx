@@ -16,8 +16,6 @@ namespace Surging.SqlSugar.DbRepository.Impl
             using (var client = SqlClient.GetInstance())
             {
                 rs = await client.Insertable(t).ExecuteCommandAsync() == 1;
-                //var obj = client.Insertable(t);
-                //if (obj != null) { rs = true; }
             }
             return rs;
         }
