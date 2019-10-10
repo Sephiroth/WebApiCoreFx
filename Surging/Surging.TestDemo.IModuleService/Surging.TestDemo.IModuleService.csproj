@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>H:\CSharp\WebApiDotnetCoreDemo\Surging\Surging.TestDemo.IModuleService\Surging.TestDemo.IModuleService.xml</DocumentationFile>
+    <DocumentationFile>F:\CSharp\WebApiCoreFx_ALL\WebApiDotnetCoreDemo\Surging\Surging.TestDemo.IModuleService\Surging.TestDemo.IModuleService.xml</DocumentationFile>
     <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
