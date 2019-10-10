@@ -49,9 +49,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRepository", "DotnetCore3W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linq2DB.Repository", "DotnetCore3WebApi\Linq2DB.Repository\Linq2DB.Repository.csproj", "{1BAE6447-F425-4D9D-A04A-B79A1EF983AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ORMTest", "DotnetCore3WebApi\ORMTest\ORMTest.csproj", "{B805CC1A-52A8-4988-A844-6B2FFC6A381E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ORMTest", "DotnetCore3WebApi\ORMTest\ORMTest.csproj", "{B805CC1A-52A8-4988-A844-6B2FFC6A381E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperTest", "DotnetCore3WebApi\DapperTest\DapperTest.csproj", "{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperTest", "DotnetCore3WebApi\DapperTest\DapperTest.csproj", "{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCoreTest", "DotnetCore3WebApi\EFCoreTest\EFCoreTest.csproj", "{5A898EE8-64FF-48B9-9CCE-9125D0B31A76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +149,10 @@ Global
 		{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -174,6 +180,7 @@ Global
 		{1BAE6447-F425-4D9D-A04A-B79A1EF983AB} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 		{B805CC1A-52A8-4988-A844-6B2FFC6A381E} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 		{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
+		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E10A223F-DB86-4F9A-9FCE-B15A7A855840}

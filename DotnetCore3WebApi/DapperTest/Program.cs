@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Diagnostics;
 
 namespace DapperTest
 {
@@ -10,23 +11,42 @@ namespace DapperTest
     {
         static void Main(string[] args)
         {
-            string connStr = "server=192.168.0.82;uid=root;pwd=zkzl1-1=mysql;database=db_electricity_network;Pooling=true;Max Pool Size=20;";
-            using (IDbConnection conn = new MySqlConnection(connStr))
+            string connStr = "server=127.0.0.1;uid=root;pwd=123456;database=db_electricity_network;Pooling=true;Max Pool Size=20;";
+            var u = new TUserinfo()
             {
-                conn.Open();
-                var u = new TUserinfo()
+                Username = "asd",
+                Password = "123",
+                Sex = Convert.ToChar("女"),
+                Email = "123qq.com",
+                Idcard = "123123123412341234",
+                Phone = "18811112222"
+            };
+
+            for (int i = 0; i < 30; i++)
+            {
+                using (IDbConnection conn = new MySqlConnection(connStr))
                 {
-                    Username = "asd",
-                    Password = "123",
-                    Sex = Convert.ToChar("女"),
-                    Email = "123qq.com",
-                    Idcard = "123123123412341234",
-                    Phone = "18811112222"
-                };
-                int rs = conn.ExecuteAsync("INSERT INTO t_userinfo (idcard,phone,username,password,sex,email) VALUES (@idcard,@phone,@username,@password,@sex,@email);", u).GetAwaiter().GetResult();
-                //conn.QuerySingle
-                //conn.Close();
+                    conn.Open();
+                    //int rs = conn.ExecuteAsync("INSERT INTO t_userinfo (idcard,phone,username,password,sex,email) VALUES (@idcard,@phone,@username,@password,@sex,@email);", u).GetAwaiter().GetResult();
+                    var user = conn.QueryFirstOrDefault("SELECT * FROM t_userinfo WHERE id =@id", new { id = 1 });
+                    //conn.Close();
+                }
             }
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (int i = 0; i < 1000; i++)
+            {
+                using (IDbConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+                    //int rs = conn.ExecuteAsync("INSERT INTO t_userinfo (idcard,phone,username,password,sex,email) VALUES (@idcard,@phone,@username,@password,@sex,@email);", u).GetAwaiter().GetResult();
+                    var user = conn.QueryFirstOrDefault("SELECT * FROM t_userinfo WHERE id =@id", new { id = 1 });
+                    //conn.Close();
+                }
+            }
+            stopwatch.Stop();
+            Console.WriteLine($"平均耗时!{Convert.ToSingle(stopwatch.ElapsedMilliseconds) / 1000}ms");
             Console.WriteLine();
         }
     }
