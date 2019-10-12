@@ -1,10 +1,10 @@
-﻿using System;
+﻿using IRepository.Interface;
+using LinqToDB;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using IRepository.Interface;
-using LinqToDB;
-using Linq2DBModels;
 
 namespace Linq2DB.Repository.Impl
 {

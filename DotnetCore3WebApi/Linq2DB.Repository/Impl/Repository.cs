@@ -1,7 +1,7 @@
 ﻿using IRepository.Interface;
-using Linq2DBModels;
-using System;
 using LinqToDB;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;

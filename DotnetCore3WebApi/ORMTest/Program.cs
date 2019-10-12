@@ -1,5 +1,5 @@
 ﻿using Linq2DB.Repository.Impl;
-using Linq2DBModels;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,36 +46,7 @@ namespace ORMTest
             #endregion
             Console.Read();
         }
-
-        public static void test()
-        {
-            Task.Factory.StartNew(async () =>
-            {
-                DbElectricityNetworkDB.ConnStr = "server=192.168.0.82;uid=root;pwd=zkzl1-1=mysql;database=db_electricity_network;Pooling=true;Max Pool Size=20";
-                UserRepository resp = new UserRepository();
-                #region LinqToDB
-                List<Task> list1 = new List<Task>(30);
-                for (int i = 0; i < 30; i++)
-                {
-                    list1.Add(new Task(() => { GetData(resp); }));
-                }
-                Task.WaitAll(list1.ToArray());
-
-                List<Task> list = new List<Task>(1000);
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                for (int i = 0; i < 1000; i++)
-                {
-                    list.Add(new Task(() => { GetData(resp); }));
-                    //var rs = await resp.GetEntity(s => s.Id.Equals("c85c3fd3-b405-4b45-bb80-aa5df74a8e97"));
-                }
-                Task.WaitAll(list.ToArray());
-                stopwatch.Stop();
-                Console.WriteLine($"LinqToDB平均耗时:{Convert.ToDecimal(stopwatch.ElapsedMilliseconds) / 1000}ms");
-                #endregion
-            });
-        }
-
+        
         static async Task<TUserinfo> GetData(UserRepository resp)
         {
             return await resp.GetEntity(s => s.Id == 1);
