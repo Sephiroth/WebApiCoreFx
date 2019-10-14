@@ -9,6 +9,8 @@ C#,基于.net core2.1的Webapi框架Demo
 
 Ocelot网关Demo
 
+ORMDemo:EFCore,Dapper,SalSugar,LinqToDB
+
 #### 软件架构
 1..Net Core WebApi,Autofac,EFCore,SuqlSugar,Dapper,LinqToDB
 2.Surging微服务Demo+网关
