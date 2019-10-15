@@ -76,6 +76,10 @@ namespace Surging.SqlSugar.DbRepository.Impl
             using (var client = SqlClient.GetInstance())
             {
                 rs = await client.Updateable(t).ExecuteCommandAsync() == 1;
+                //client.Ado.BeginTran();
+                //client.Ado.ExecuteCommand(client.Updateable());
+                //client.Ado.CommitTran();
+                //client.Ado.RollbackTran();
             }
             return rs;
         }
