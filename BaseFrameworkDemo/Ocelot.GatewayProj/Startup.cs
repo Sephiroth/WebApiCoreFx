@@ -1,48 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
+using CacheManager.Core.Utility;
+using Ocelot.Cache.CacheManager;
+using Ocelot.Cache;
 
 namespace Ocelot.GatewayProj
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public IConfiguration Configuration { get; private set; }
+        private string authenticationProviderKey;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IHostingEnvironment env)
+        {
+            var config = new Microsoft.Extensions.Configuration.ConfigurationBuilder();
+            config.SetBasePath(env.ContentRootPath)
+                .AddJsonFile("Ocelot.json")
+                .AddEnvironmentVariables();
+            Configuration = config.Build();
+
+            authenticationProviderKey = Configuration["ReRoutes:0:AuthenticationOptions:AuthenticationProviderKey"];//.GetSection("ReRoutes:AuthenticationOptions:AuthenticationProviderKey").Value;//["ReRoutes:AuthenticationOptions:AuthenticationProviderKey"];
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddOcelot();
+            services.AddLogging(logging =>
+            {
+                logging.AddConsole();
+                logging.AddDebug();
+            });
+            services.AddOcelot()
+                .AddCacheManager(s => { s.WithDictionaryHandle(); })
+                .AddConsul();//.AddTransientDefinedAggregator<FakeDefinedAggregator>()
+            services.AddAuthentication().AddJwtBearer(authenticationProviderKey, s =>
+            {
+            });
+
+            // 使用自定义缓存
+            //services.AddSingleton<IOcelotCache<CachedResponse>, MyCache>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
             app.UseOcelot().Wait();
+
             //app.UseHttpsRedirection();
             //app.UseMvc();
         }

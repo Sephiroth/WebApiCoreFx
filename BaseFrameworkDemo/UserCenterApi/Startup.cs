@@ -1,23 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using IdentityModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using NLog.Extensions.Logging;
+using System;
+using System.Text;
+using System.Threading.Tasks;
+using UserCenterApi.Extensions;
 
 namespace UserCenterApi
 {
     public class Startup
     {
+        public static SymmetricSecurityKey symmetricKey;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("key"));
         }
 
         public IConfiguration Configuration { get; }
@@ -25,23 +30,53 @@ namespace UserCenterApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            _ = services.AddAuthentication(s =>
+            {
+                s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+                {
+                    o.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        NameClaimType = JwtClaimTypes.Name,
+                        RoleClaimType = JwtClaimTypes.Role,
+                        ValidIssuer = "YFAPICommomCore",
+                        ValidAudience = "api",
+                        IssuerSigningKey = symmetricKey,
+                        // 是否验证Token有效期，使用当前时间与Token的Claims中的NotBefore和Expires对比
+                        ValidateLifetime = true,
+                        //注意这是缓冲过期时间，总的有效时间等于这个时间加上jwt的过期时间，如果不配置，默认是5分钟
+                        ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                    o.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Query["AccessToken"];
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+            services.AddConsulConfig(Configuration);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggingBuilder logBuilder, IApplicationLifetime lifetime)
         {
+            _ = logBuilder.AddConsole();
+            NLog.LogManager.LoadConfiguration("nlog.config");
+            _ = logBuilder.AddNLog();
+
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
-                app.UseHsts();
-            }
+                app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
+            app.UseConsul();
             app.UseMvc();
+            //app.RegisterConsul(Configuration, lifetime);
         }
     }
 }

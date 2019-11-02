@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace IDBLayer.Interface
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T> where T : class, new()
     {
         /// <summary>
         /// 获取单个实例(异步)
