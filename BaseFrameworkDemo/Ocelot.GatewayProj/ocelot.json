@@ -132,5 +132,16 @@
   "FileCacheOptions": {
     "TtlSeconds": 15,
     "Region": "somename"
+  },
+
+  "ServiceDiscovery": {
+    "ServiceName": "DataService",
+    "Consul": {
+      "HttpEndpoint": "http://127.0.0.1:8500",
+      "DnsEndpoint": {
+        "Address": "127.0.0.1",
+        "Port": 8600
+      }
+    }
   }
 }

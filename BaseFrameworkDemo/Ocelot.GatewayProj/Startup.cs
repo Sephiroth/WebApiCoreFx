@@ -9,6 +9,9 @@ using Ocelot.Provider.Consul;
 using CacheManager.Core.Utility;
 using Ocelot.Cache.CacheManager;
 using Ocelot.Cache;
+using Ocelot.GatewayProj.Model;
+using DnsClient;
+using Microsoft.Extensions.Options;
 
 namespace Ocelot.GatewayProj
 {
@@ -25,12 +28,16 @@ namespace Ocelot.GatewayProj
                 .AddEnvironmentVariables();
             Configuration = config.Build();
 
-            authenticationProviderKey = Configuration["ReRoutes:0:AuthenticationOptions:AuthenticationProviderKey"];//.GetSection("ReRoutes:AuthenticationOptions:AuthenticationProviderKey").Value;//["ReRoutes:AuthenticationOptions:AuthenticationProviderKey"];
+            authenticationProviderKey = Configuration["ReRoutes:0:AuthenticationOptions:AuthenticationProviderKey"];
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //从配置文件中获取ServiceDiscovery
+            services.Configure<ServiceDisvoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
+
+
             services.AddLogging(logging =>
             {
                 logging.AddConsole();
@@ -42,9 +49,15 @@ namespace Ocelot.GatewayProj
             services.AddAuthentication().AddJwtBearer(authenticationProviderKey, s =>
             {
             });
-
             // 使用自定义缓存
             //services.AddSingleton<IOcelotCache<CachedResponse>, MyCache>();
+
+            services.AddSingleton<IDnsQuery>(p =>
+            {
+                //从配置文件中获取consul相关配置信息
+                ServiceDisvoveryOptions serviceConfig = p.GetRequiredService<IOptions<ServiceDisvoveryOptions>>().Value;
+                return new LookupClient(serviceConfig.Consul.DnsEndpoint.ToIPEndPoint());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

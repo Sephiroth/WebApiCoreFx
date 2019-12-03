@@ -13,8 +13,8 @@ namespace UserCenterApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .UseKestrel()
             .UseUrls("http://127.0.0.1:10011")
-            //.UseKestrel()
             .UseStartup<Startup>();
     }
 }

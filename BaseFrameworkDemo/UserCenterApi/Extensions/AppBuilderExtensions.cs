@@ -1,8 +1,13 @@
 ﻿using Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
+using UserCenterApi.Model;
 
 namespace UserCenterApi.Extensions
 {
@@ -15,38 +20,49 @@ namespace UserCenterApi.Extensions
         /// <param name="config"></param>
         /// <param name="lifetime"></param>
         /// <returns></returns>
-        public static IApplicationBuilder RegisterConsul(this IApplicationBuilder app, IConfiguration config, IApplicationLifetime lifetime)
+        public static IApplicationBuilder RegisterConsul(this IApplicationBuilder app,
+            IConfiguration config,
+            IOptions<ServiceDisvoveryOptions> serviceOptions,
+            IConsulClient consul)
         {
-            string consulIP = config.GetValue<string>("Consul:IP");
-            string consulPort = config.GetValue<string>("Consul:Port");
-            string serviceName = config.GetValue<string>("Consul:ServiceName");
-            string consulHost = config.GetValue<string>("Consul:Host");
-            //请求注册的 Consul 地址
-            var consulClient = new ConsulClient(x => x.Address = new Uri(consulHost));
-            var httpCheck = new AgentServiceCheck()
+            //从当前启动的url中拿到url
+            var features = app.Properties["server.Features"] as FeatureCollection;
+            var addresses = features.Get<IServerAddressesFeature>().Addresses.Select(p => new Uri(p));
+            foreach (var address in addresses)
             {
-                DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5),//服务启动多久后注册
-                Interval = TimeSpan.FromSeconds(10),//健康检查时间间隔，或者称为心跳间隔
-                HTTP = $"{consulHost}/api/health",//健康检查地址
-                Timeout = TimeSpan.FromSeconds(5)
-            };
+                string serviceId = $"{serviceOptions.Value.ServiceName}_{address.Host}:{address.Port}";
+                AgentServiceCheck httpCheck = new AgentServiceCheck()
+                {
+                    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1),
+                    Interval = TimeSpan.FromSeconds(30),
+                    HTTP = new Uri(address, "HealthCheck").OriginalString
+                };
+                AgentServiceRegistration registration = new AgentServiceRegistration()
+                {
+                    Checks = new[] { httpCheck },
+                    Address = address.Host,
+                    ID = serviceId,
+                    Name = serviceOptions.Value.ServiceName,
+                    Port = address.Port
+                };
+                consul.Agent.ServiceRegister(registration).GetAwaiter().GetResult();
+            }
+            return app;
+        }
 
-            // Register service with consul
-            var registration = new AgentServiceRegistration()
+        //移除方法
+        public static IApplicationBuilder RemoveService(IApplicationBuilder app,
+            IOptions<ServiceDisvoveryOptions> serviceOptions,
+            IConsulClient consul)
+        {
+            //从当前启动的url中拿到url
+            var features = app.Properties["server.Features"] as FeatureCollection;
+            var addresses = features.Get<IServerAddressesFeature>().Addresses.Select(p => new Uri(p));
+            foreach (var address in addresses)
             {
-                Checks = new[] { httpCheck },
-                ID = Guid.NewGuid().ToString(),
-                Name = serviceName,
-                Address = consulIP,
-                Port = Convert.ToInt32(consulPort),
-                Tags = new[] { $"urlprefix-/{serviceName}" }//添加 urlprefix-/servicename 格式的 tag 标签，以便 Fabio 识别
-            };
-
-            consulClient.Agent.ServiceRegister(registration).Wait();//服务启动时注册，内部实现其实就是使用 Consul API 进行注册（HttpClient发起）
-            lifetime.ApplicationStopping.Register(() =>
-            {
-                consulClient.Agent.ServiceDeregister(registration.ID).Wait();//服务停止时取消注册
-            });
+                var serviceId = $"{serviceOptions.Value.ServiceName}_{address.Host}:{address.Port}";
+                consul.Agent.ServiceDeregister(serviceId).GetAwaiter().GetResult();
+            }
             return app;
         }
     }

@@ -1,4 +1,5 @@
-﻿using IdentityModel;
+﻿using Consul;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using NLog.Extensions.Logging;
 using System;
 using System.Text;
 using System.Threading.Tasks;
 using UserCenterApi.Extensions;
+using UserCenterApi.Model;
 
 namespace UserCenterApi
 {
@@ -30,6 +32,19 @@ namespace UserCenterApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //从配置文件中获取ServiceDiscovery
+            services.Configure<ServiceDisvoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
+            //单例注册ConsulClient
+            services.AddSingleton<IConsulClient>(p => new ConsulClient(cfg =>
+            {
+                var serviceConfiguration = p.GetRequiredService<IOptions<ServiceDisvoveryOptions>>().Value;
+                if (!string.IsNullOrEmpty(serviceConfiguration.Consul.HttpEndpoint))
+                {
+                    // if not configured, the client will use the default value "127.0.0.1:8500"
+                    cfg.Address = new Uri(serviceConfiguration.Consul.HttpEndpoint);
+                }
+            }));
+
             _ = services.AddAuthentication(s =>
             {
                 s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,12 +77,13 @@ namespace UserCenterApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggingBuilder logBuilder, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory LoggerFactory,
+            IApplicationLifetime lifetime,
+            IConsulClient consulClient,
+            IOptions<ServiceDisvoveryOptions> DisvoveryOptions)
         {
-            _ = logBuilder.AddConsole();
-            NLog.LogManager.LoadConfiguration("nlog.config");
-            _ = logBuilder.AddNLog();
-
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
@@ -76,7 +92,16 @@ namespace UserCenterApi
             app.UseHttpsRedirection();
             app.UseConsul();
             app.UseMvc();
-            //app.RegisterConsul(Configuration, lifetime);
+            app.UseAuthentication();
+
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                AppBuilderExtensions.RegisterConsul(app, Configuration, DisvoveryOptions, consulClient);
+            });
+            lifetime.ApplicationStopped.Register(() =>
+            {
+                AppBuilderExtensions.RemoveService(app, DisvoveryOptions, consulClient);
+            });
         }
     }
 }

@@ -57,8 +57,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCoreTest", "DotnetCore3We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlSugar.Repository", "DotnetCore3WebApi\SqlSugar.Repository\SqlSugar.Repository.csproj", "{1E56E467-CFE4-47C3-9FA5-F765340CB74B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcelotGateway", "BaseFrameworkDemo\OcelotGateway\OcelotGateway.csproj", "{FD175BD6-1E3D-4F7A-9EAD-A3245BA600E0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,10 +159,6 @@ Global
 		{1E56E467-CFE4-47C3-9FA5-F765340CB74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E56E467-CFE4-47C3-9FA5-F765340CB74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E56E467-CFE4-47C3-9FA5-F765340CB74B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD175BD6-1E3D-4F7A-9EAD-A3245BA600E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD175BD6-1E3D-4F7A-9EAD-A3245BA600E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD175BD6-1E3D-4F7A-9EAD-A3245BA600E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD175BD6-1E3D-4F7A-9EAD-A3245BA600E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,7 +188,6 @@ Global
 		{A07E57ED-FFF7-4A2E-9D84-9CFCBD4251AD} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 		{1E56E467-CFE4-47C3-9FA5-F765340CB74B} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
-		{FD175BD6-1E3D-4F7A-9EAD-A3245BA600E0} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E10A223F-DB86-4F9A-9FCE-B15A7A855840}
