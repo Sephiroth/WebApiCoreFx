@@ -1,21 +1,22 @@
 # WebApiDotnetCoreDemo
 
 #### 介绍
-C#,基于.net core2.1的Webapi框架Demo
 
-.Net Core 2.2 + Surging-1.0.0版本的微服务框架
+##### BaseFrameworkDemo
+WebApiCoreFx:（Dotnet Core2.2 + EFCore + Autofac + AspectCore + Log4net）
 
-.Net Core 3.0 rc1 WebApi Demo
+基于AspectCore实现AOP
 
+Ocelot.GatewayProj:(...)
 Ocelot网关Demo
 
-ORM Demo:EFCore,Dapper,SqlSugar,LinqToDB
+##### ORM_Demo
+EFCore,Dapper,SqlSugar,LinqToDB
+
+##### Serging微服务框架参考Demo
+.Net Core 2.2 + Surging-1.0.0版本的微服务框架
 
 #### 软件架构
-1..Net Core WebApi,Autofac,EFCore,SqlSugar,Dapper,LinqToDB;
-
-2.Surging微服务Demo+网关
-
-
+.Net Core WebApi,MVC,微服务
 
 #### 参与贡献
