@@ -30,6 +30,7 @@ namespace DapperTest
                     //int rs = conn.ExecuteAsync("INSERT INTO t_userinfo (idcard,phone,username,password,sex,email) VALUES (@idcard,@phone,@username,@password,@sex,@email);", u).GetAwaiter().GetResult();
                     var user = conn.QueryFirstOrDefault("SELECT * FROM t_userinfo WHERE id =@id", new { id = 1 });
                     //conn.Close();
+                    TUserinfo userinfo = user as TUserinfo;
                 }
             }
 

@@ -10,7 +10,7 @@ namespace WebApiCoreFx.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TestController : ControllerBase
     {
         private IUserService userServ;
@@ -21,14 +21,14 @@ namespace WebApiCoreFx.Controllers
         }
 
         [HttpGet]
+        [Route("Get")]
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)
         {
-            //string ss = "sss";
-            //int a = Convert.ToInt32(ss);
             return await userServ.GetAsync(nickName);
         }
 
         [HttpPost]
+        [Route("Post")]
         public async Task<ActionResult<bool>> Post([FromBody]List<TbUser> list)
         {
             return await userServ.AddAsync(list);

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace WebApiCoreFx
 {
@@ -19,7 +12,8 @@ namespace WebApiCoreFx
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseUrls("https://localhost:10010")
+            //.UseUrls("http://*:10010")
             .UseStartup<Startup>();
+            //.UseKestrel(option=> { option.ListenAnyIP(10010); });
     }
 }

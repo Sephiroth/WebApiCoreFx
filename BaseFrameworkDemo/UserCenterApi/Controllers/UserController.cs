@@ -12,6 +12,7 @@ namespace UserCenterApi.Controllers
     public class UserController : ControllerBase
     {
         [HttpGet]
+        [Route("Login")]
         public string Login(string username, string pwd)
         {
             bool rs = false;

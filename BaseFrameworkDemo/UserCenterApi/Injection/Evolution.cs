@@ -1,9 +1,8 @@
 ﻿using Autofac;
 using DBLayer.DAL;
 using IDBLayer.Interface;
-using System.Reflection;
 
-namespace WebApiCoreFx.Injection
+namespace UserCenterApi.Injection
 {
     public class Evolution : Autofac.Module
     {
@@ -13,10 +12,6 @@ namespace WebApiCoreFx.Injection
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
             // 通过反射批量注入Logic层的类
             //builder.RegisterAssemblyTypes(Assembly.Load("IDBLayer")).Where(t => t.Name.EndsWith("Repository")).AsImplementedInterfaces();
-            // 注册程序集
-            Assembly Service = Assembly.Load("LogicLayer");
-            Assembly IService = Assembly.Load("ILogicLayer");
-            builder.RegisterAssemblyTypes(IService, Service).AsImplementedInterfaces().Where(t => t.Name.EndsWith("Service"));
         }
     }
 }

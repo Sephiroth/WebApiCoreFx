@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DBLayer.DAL
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class, new()
     {
         public async Task<bool> AddListAsync(List<T> t)
         {

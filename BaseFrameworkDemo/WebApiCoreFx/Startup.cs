@@ -1,25 +1,30 @@
-﻿//using Alachisoft.NCache.Web.SessionState;
+﻿using AopDLL;
+using AspectCore.Configuration;
+using AspectCore.Extensions.Autofac;
+using AspectCore.Extensions.DependencyInjection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using DBLayer.DAL;
 using DBModel.Entity;
+using IDBLayer.Interface;
 using IdentityModel;
+using ILogicLayer.Interface;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
+using LogicLayer.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
 using WebApiCoreFx.Injection;
 
@@ -46,10 +51,20 @@ namespace WebApiCoreFx
         /// 通过Autofac 实现Ioc
         /// </summary>
         /// <param name="services"></param>
-        /// <returns></returns>
+        /// <returns>IServiceProvider</returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            #region .Net core Ioc注册
+            //services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            //services.AddTransient<IUserService, UserService>();
+            #endregion
+
+            #region 身份验证
+            _ = services.AddAuthentication(s =>
+            {
+                s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(o =>
                 {
                     o.TokenValidationParameters = new TokenValidationParameters()
@@ -58,27 +73,32 @@ namespace WebApiCoreFx
                         RoleClaimType = JwtClaimTypes.Role,
                         ValidIssuer = "YFAPICommomCore",
                         ValidAudience = "api",
-                        IssuerSigningKey = symmetricKey
+                        IssuerSigningKey = symmetricKey,
+                        // 是否验证Token有效期，使用当前时间与Token的Claims中的NotBefore和Expires对比
+                        ValidateLifetime = true,
+                        //注意这是缓冲过期时间，总的有效时间等于这个时间加上jwt的过期时间，如果不配置，默认是5分钟
+                        ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                    o.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Query["AccessToken"];
+                            return Task.CompletedTask;
+                        }
                     };
                 });
+            #endregion
 
             services.AddMvc(options =>
                 {
-                    options.Filters.Add<HttpGlobalExceptionFilter>();
+                    options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
+                    options.EnableEndpointRouting = false;//default true
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSession();
-            // 配置启用NCache
-            //services.AddNCacheSession(Configuration.GetSection("NCacheSessions")); // 等效于下一行
-            //services.AddNCacheSession(configuration =>
-            //{
-            //    configuration.CacheName = "mySessionCache";
-            //    configuration.EnableLogs = true;
-            //    configuration.SessionAppId = "NCacheSessionApp";
-            //    configuration.SessionOptions.IdleTimeout = 5;
-            //    configuration.SessionOptions.CookieName = "AspNetCore.Session";
-            //});
 
+            #region swagger文档
             services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("Version1", new Swashbuckle.AspNetCore.Swagger.Info()
@@ -100,23 +120,32 @@ namespace WebApiCoreFx
                 });
                 option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
             });
+            #endregion
 
-            var builder = new ContainerBuilder();
+            #region Autofac注册程序集(自动注入)
+            ContainerBuilder builder = new ContainerBuilder();
             builder.Populate(services);
             builder.RegisterModule(new Evolution());
-            Assembly Service = Assembly.Load("LogicLayer");
-            Assembly IService = Assembly.Load("ILogicLayer");
-            builder.RegisterAssemblyTypes(IService, Service).AsImplementedInterfaces().Where(t => t.Name.EndsWith("Service"));
-            //builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
-            var Container = builder.Build();
-            return new AutofacServiceProvider(Container);
-        }
 
-        //public void ConfigureServices(IServiceCollection services)
-        //{
-        //    services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-        //    services.AddTransient<db_cdzContext>();
-        //}
+            #region 基于AspectCore实现AOP
+            builder.RegisterDynamicProxy(null, config =>
+            {
+                // namespace1命名空间下的Service不会被代理
+                //config.NonAspectPredicates.Add(Predicates.ForNameSpace("namespace1"));//"*.namespace1"
+                // *Service结尾的Service不会被代理
+                //config.NonAspectPredicates.Add(Predicates.ForService("*Service"));
+                // *method结尾的Service不会被代理
+                //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
+                config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
+                config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
+                config.ThrowAspectException = true;
+            });
+            #endregion
+
+            IContainer container = builder.Build();
+            return new AutofacServiceProvider(container);
+            #endregion
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -135,38 +164,31 @@ namespace WebApiCoreFx
             // 放在useMvc前，否则报错
             app.UseSession();
             app.UseAuthentication();
-            app.UseHttpsRedirection();
-            //添加访问静态文件
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(AppDomain.CurrentDomain.BaseDirectory),
-                RequestPath = @"/StaticFiles"
-            });
-            app.UseMvcWithDefaultRoute();
             app.UseSwagger();
+
+            //添加访问静态文件
+            app.UseStaticFiles();
+            //string fileUploadPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadFiles");
+            //if (!Directory.Exists(fileUploadPath))
+            //{
+            //    Directory.CreateDirectory(fileUploadPath);
+            //}
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(fileUploadPath),
+            //    RequestPath = "/UploadFiles"
+            //});
+
             app.UseSwaggerUI(o =>
             {
                 o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
             });
+            app.UseHttpsRedirection();
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=myApp}/{action=Index}/{id?}");
-            });
-            //app.UseStaticFiles(); //使用静态文件
-
-            // 设置文件上传保存路径
-            string fileUploadPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadFiles");
-            if (!Directory.Exists(fileUploadPath))
-            {
-                Directory.CreateDirectory(fileUploadPath);
-            }
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(fileUploadPath),
-                RequestPath = "/UploadFiles"
+                routes.MapRoute(name: "default", template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
 }

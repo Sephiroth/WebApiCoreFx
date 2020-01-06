@@ -10,7 +10,6 @@ namespace WebApiCoreFx.Filter
         public void OnException(ExceptionContext context)
         {
             logger.Error(context.Exception);
-            //throw new NotImplementedException();
         }
     }
 }

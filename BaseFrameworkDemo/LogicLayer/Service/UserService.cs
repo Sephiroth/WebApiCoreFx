@@ -1,4 +1,5 @@
-﻿using DBModel.Entity;
+﻿using AopDLL;
+using DBModel.Entity;
 using IDBLayer.Interface;
 using ILogicLayer.Interface;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace LogicLayer.Service
             return await rep.AddListAsync(list);
         }
 
+        [DothingAfterInterceptor]
+        [DothingBeforeInterceptor]
         public async Task<List<TbUser>> GetAsync(string nickName)
         {
             return await rep.GetListAsync(w => w.Nickname.Equals(nickName));
