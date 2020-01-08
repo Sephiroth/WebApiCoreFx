@@ -122,6 +122,17 @@ namespace WebApiCoreFx
             });
             #endregion
 
+            #region 跨域
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", p =>
+                {
+                    // 允许所有的域名请求 // 允许所有的请求方式GET/POST/PUT/DELETE // 允许所有的头部参数 // 允许携带Cookie
+                    p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+                });
+            });
+            #endregion
+
             #region Autofac注册程序集(自动注入)
             ContainerBuilder builder = new ContainerBuilder();
             builder.Populate(services);
@@ -179,6 +190,7 @@ namespace WebApiCoreFx
             //    RequestPath = "/UploadFiles"
             //});
 
+            app.UseCors("AllowAll");
             app.UseSwaggerUI(o =>
             {
                 o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
