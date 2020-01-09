@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -54,7 +55,7 @@ namespace WebApiCoreFx
         /// <returns>IServiceProvider</returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            #region .Net core Ioc注册
+            #region .net core ioc注册
             //services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             //services.AddTransient<IUserService, UserService>();
             #endregion
@@ -127,7 +128,7 @@ namespace WebApiCoreFx
             builder.Populate(services);
             builder.RegisterModule(new Evolution());
 
-            #region 基于AspectCore实现AOP
+            #region 基于AspectCore实现aop
             builder.RegisterDynamicProxy(null, config =>
             {
                 // namespace1命名空间下的Service不会被代理
@@ -167,17 +168,13 @@ namespace WebApiCoreFx
             app.UseSwagger();
 
             //添加访问静态文件
-            app.UseStaticFiles();
-            //string fileUploadPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadFiles");
-            //if (!Directory.Exists(fileUploadPath))
-            //{
-            //    Directory.CreateDirectory(fileUploadPath);
-            //}
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(fileUploadPath),
-            //    RequestPath = "/UploadFiles"
-            //});
+            //app.UseStaticFiles();
+            string folder = CreateDirectory("FileFolder");
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(folder) //
+                //RequestPath = folder // 静态文件请求路径
+            });
 
             app.UseSwaggerUI(o =>
             {
@@ -188,6 +185,24 @@ namespace WebApiCoreFx
             {
                 routes.MapRoute(name: "default", template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        /// <summary>
+        /// 创建文件夹
+        /// </summary>
+        /// <param name="directory"></param>
+        private string CreateDirectory(string directory)
+        {
+            DirectoryInfo info = null;
+            if (Path.IsPathRooted(directory)) // 判断是否是绝对路径
+            {
+                directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, directory);
+            }
+            if (!Directory.Exists(directory))
+            {
+                info = Directory.CreateDirectory(directory);
+            }
+            return info?.FullName;
         }
 
     }

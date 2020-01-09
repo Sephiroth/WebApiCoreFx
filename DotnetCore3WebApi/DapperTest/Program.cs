@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using MySql.Data.MySqlClient;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 
@@ -11,28 +10,16 @@ namespace DapperTest
     {
         static void Main(string[] args)
         {
-            string connStr = "server=127.0.0.1;uid=root;pwd=123456;database=db_electricity_network;Pooling=true;Max Pool Size=20;";
-            var u = new TUserinfo()
-            {
-                Username = "asd",
-                Password = "123",
-                Sex = Convert.ToChar("女"),
-                Email = "123qq.com",
-                Idcard = "123123123412341234",
-                Phone = "18811112222"
-            };
+            string connStr = "server=127.0.0.1;uid=root;pwd=123456;database=db_cdz;Pooling=true;Max Pool Size=20;";
 
-            for (int i = 0; i < 30; i++)
+            TbUser user = null;
+            using (IDbConnection conn = new MySqlConnection(connStr))
             {
-                using (IDbConnection conn = new MySqlConnection(connStr))
-                {
-                    conn.Open();
-                    //int rs = conn.ExecuteAsync("INSERT INTO t_userinfo (idcard,phone,username,password,sex,email) VALUES (@idcard,@phone,@username,@password,@sex,@email);", u).GetAwaiter().GetResult();
-                    var user = conn.QueryFirstOrDefault("SELECT * FROM t_userinfo WHERE id =@id", new { id = 1 });
-                    //conn.Close();
-                    TUserinfo userinfo = user as TUserinfo;
-                }
+                conn.Open();
+                user = conn.QueryFirst<TbUser>("SELECT * FROM tb_user WHERE id =@id", new { id = "2a633ebf87684421b1aa75633c611210" });
             }
+            Console.WriteLine(user?.Id);
+            user = null;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -41,29 +28,32 @@ namespace DapperTest
                 using (IDbConnection conn = new MySqlConnection(connStr))
                 {
                     conn.Open();
-                    //int rs = conn.ExecuteAsync("INSERT INTO t_userinfo (idcard,phone,username,password,sex,email) VALUES (@idcard,@phone,@username,@password,@sex,@email);", u).GetAwaiter().GetResult();
-                    var user = conn.QueryFirstOrDefault("SELECT * FROM t_userinfo WHERE id =@id", new { id = 1 });
-                    //conn.Close();
+                    user = conn.QueryFirst<TbUser>("SELECT * FROM tb_user WHERE id =@id", new { id = "2a633ebf87684421b1aa75633c611210" }) as TbUser;
                 }
             }
             stopwatch.Stop();
             Console.WriteLine($"平均耗时!{Convert.ToSingle(stopwatch.ElapsedMilliseconds) / 1000}ms");
-            Console.WriteLine();
+            Console.ReadLine();
         }
     }
 
-    public partial class TUserinfo
+    public class TbUser
     {
-        /// <summary>
-        /// 自增主键ID
-        /// </summary>
-        [Key]
-        public int Id { get; set; } // int(32)
-        public string Idcard { get; set; } // char(18)
-        public string Phone { get; set; } // varchar(13)
-        public string Username { get; set; } // varchar(20)
-        public string Password { get; set; } // varchar(50)
-        public char? Sex { get; set; } // enum('男','女')
-        public string Email { get; set; } // varchar(30)
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Nickname { get; set; }
+        public string Phone { get; set; }
+        public string WechatId { get; set; }
+        public int DiscountBalance { get; set; }
+        public int WithdrawalBalance { get; set; }
+        public string CarNum { get; set; }
+        public string Openid { get; set; }
+        public string Pwd { get; set; }
+        public string Photo { get; set; }
+        public string Email { get; set; }
+        public int? Gender { get; set; }
+        public int State { get; set; }
+        public DateTime CreateTime { get; set; }
     }
+
 }
