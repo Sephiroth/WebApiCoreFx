@@ -1,21 +1,17 @@
 ﻿using AopDLL;
 using AspectCore.Configuration;
 using AspectCore.Extensions.Autofac;
-using AspectCore.Extensions.DependencyInjection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using DBLayer.DAL;
 using DBModel.Entity;
-using IDBLayer.Interface;
 using IdentityModel;
-using ILogicLayer.Interface;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
-using LogicLayer.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -91,12 +87,29 @@ namespace WebApiCoreFx
                 });
             #endregion
 
+            #region 限制上传文件
+            services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = long.MaxValue;
+            });
+            #endregion
+
+            #region 添加缓存
+            services.AddDistributedRedisCache(options =>
+            {
+                //用于连接Redis的配置  Configuration.GetConnectionString("RedisConnectionString")读取配置信息的串
+                options.Configuration = Configuration["Redis:ConnectionString"];
+                //Redis实例名RedisDistributedCache
+                options.InstanceName = "RedisDistributedCache";
+            });
+            #endregion
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
                     options.EnableEndpointRouting = false;//default true
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession();
 
             #region swagger文档
@@ -195,7 +208,7 @@ namespace WebApiCoreFx
             app.UseHttpsRedirection();
             app.UseMvc(routes =>
             {
-                routes.MapRoute(name: "default", template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}");
             });
         }
 
@@ -206,15 +219,12 @@ namespace WebApiCoreFx
         private string CreateDirectory(string directory)
         {
             DirectoryInfo info = null;
-            if (Path.IsPathRooted(directory)) // 判断是否是绝对路径
-            {
+            if (!Path.IsPathRooted(directory)) // 判断是否是绝对路径
                 directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, directory);
-            }
+
             if (!Directory.Exists(directory))
-            {
                 info = Directory.CreateDirectory(directory);
-            }
-            return info?.FullName;
+            return info?.FullName ?? directory;
         }
 
     }
