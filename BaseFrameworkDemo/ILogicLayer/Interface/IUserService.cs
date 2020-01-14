@@ -1,4 +1,5 @@
-﻿using DBModel.Entity;
+﻿using AopDLL;
+using DBModel.Entity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace ILogicLayer.Interface
     {
         Task<bool> AddAsync(List<TbUser> list);
 
+        [DothingBeforeInterceptor]
         Task<List<TbUser>> GetAsync(string nickName);
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Linq2DB.Repository.Impl;
 using Models;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ORMTest
@@ -11,7 +13,20 @@ namespace ORMTest
     {
         static void Main(string[] args)
         {
-            //Console.WriteLine("Hello World!");
+            #region BinaryPrimitives
+            var intValue = 1;
+            var bytes = new byte[sizeof(int)];
+            BinaryPrimitives.WriteInt32BigEndian(bytes, intValue);
+            #endregion
+
+            #region Span<> 作为全局变量，或在异步中声明为变量报错
+            Span<byte> span = Encoding.UTF8.GetBytes("Hello World!").AsSpan();
+            Memory<byte> memory = new Memory<byte>();
+
+            #endregion
+
+            #region
+            #endregion
 
             //DbElectricityNetworkDB.ConnStr = "server=192.168.0.82;uid=root;pwd=zkzl1-1=mysql;database=db_electricity_network;Pooling=true;Max Pool Size=20";
             //UserRepository resp = new UserRepository();

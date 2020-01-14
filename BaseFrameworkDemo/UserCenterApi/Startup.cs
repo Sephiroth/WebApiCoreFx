@@ -32,6 +32,7 @@ namespace UserCenterApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region 注册服务到Consul
             //从配置文件中获取ServiceDiscovery
             services.Configure<ServiceDisvoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
             //单例注册ConsulClient
@@ -73,6 +74,8 @@ namespace UserCenterApi
                     };
                 });
             services.AddConsulConfig(Configuration);
+            #endregion
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -94,6 +97,7 @@ namespace UserCenterApi
             app.UseMvc();
             app.UseAuthentication();
 
+            #region 服务注册和注销(Consul)
             lifetime.ApplicationStarted.Register(() =>
             {
                 AppBuilderExtensions.RegisterConsul(app, Configuration, DisvoveryOptions, consulClient);
@@ -102,6 +106,8 @@ namespace UserCenterApi
             {
                 AppBuilderExtensions.RemoveService(app, DisvoveryOptions, consulClient);
             });
+            #endregion
+
         }
     }
 }

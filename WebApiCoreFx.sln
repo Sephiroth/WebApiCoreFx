@@ -53,7 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCoreTest", "DotnetCore3We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlSugar.Repository", "DotnetCore3WebApi\SqlSugar.Repository\SqlSugar.Repository.csproj", "{1E56E467-CFE4-47C3-9FA5-F765340CB74B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AopDLL", "BaseFrameworkDemo\AopDLL\AopDLL.csproj", "{D4649ACA-723A-40D2-AFDE-0CF1B2225BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AopDLL", "BaseFrameworkDemo\AopDLL\AopDLL.csproj", "{D4649ACA-723A-40D2-AFDE-0CF1B2225BA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizeMiddleware", "BaseFrameworkDemo\CustomizeMiddleware\CustomizeMiddleware.csproj", "{07477902-5389-4C92-AA57-4B8767DF8FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,10 @@ Global
 		{D4649ACA-723A-40D2-AFDE-0CF1B2225BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4649ACA-723A-40D2-AFDE-0CF1B2225BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4649ACA-723A-40D2-AFDE-0CF1B2225BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07477902-5389-4C92-AA57-4B8767DF8FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07477902-5389-4C92-AA57-4B8767DF8FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07477902-5389-4C92-AA57-4B8767DF8FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07477902-5389-4C92-AA57-4B8767DF8FDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +187,7 @@ Global
 		{5A898EE8-64FF-48B9-9CCE-9125D0B31A76} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 		{1E56E467-CFE4-47C3-9FA5-F765340CB74B} = {1E8B5FBB-0FF3-4108-AE9F-E1E95A26F4DF}
 		{D4649ACA-723A-40D2-AFDE-0CF1B2225BA9} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
+		{07477902-5389-4C92-AA57-4B8767DF8FDD} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E10A223F-DB86-4F9A-9FCE-B15A7A855840}

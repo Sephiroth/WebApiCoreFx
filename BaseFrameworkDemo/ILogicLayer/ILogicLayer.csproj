@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AopDLL\AopDLL.csproj" />
     <ProjectReference Include="..\DBModel\DBModel.csproj" />
   </ItemGroup>
 

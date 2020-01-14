@@ -9,7 +9,7 @@ namespace AopDLL
         public async override Task Invoke(AspectContext context, AspectDelegate next)
         {
             await next.Invoke(context);
-            Console.WriteLine($"before->{next.Method.Name}:Completed;DothingAfterExecuting");
+            Console.WriteLine($"______before->{context.ServiceMethod.Name}:Completed;DothingAfterExecuting");
         }
     }
 }

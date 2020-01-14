@@ -13,10 +13,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
@@ -29,16 +31,17 @@ namespace WebApiCoreFx
 {
     public class Startup
     {
-        public static SymmetricSecurityKey symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("need_to_get_this_from_enviroment"));
-
+        public static SymmetricSecurityKey symmetricKey { get; private set; }
+        public static readonly LoggerFactory loggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
         public static ILoggerRepository repository { get; set; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            db_cdzContext.DbConnStr = Configuration["AppSetting:DbConnStr"];
+            db_cdzContext.DbConnStr = Configuration.GetConnectionString("MysqlConnection");
             repository = LogManager.CreateRepository("NETCoreRepository");
             XmlConfigurator.Configure(repository, new FileInfo("Log4net.config"));
+            symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("need_to_get_this_from_enviroment"));
         }
 
         public IConfiguration Configuration { get; }
@@ -102,6 +105,14 @@ namespace WebApiCoreFx
                 //Redis实例名RedisDistributedCache
                 options.InstanceName = "RedisDistributedCache";
             });
+            #endregion
+
+            #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)
+            services.AddDbContextPool<db_cdzContext>(dbCtxBuilder =>
+            {
+                dbCtxBuilder.UseMySql(Configuration.GetConnectionString("MysqlConnection"));
+                dbCtxBuilder.UseLoggerFactory(loggerFactory);
+            }, 8);
             #endregion
 
             services.AddMvc(options =>
@@ -173,10 +184,10 @@ namespace WebApiCoreFx
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) // , ILoggerFactory loggerFactory
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
             {
@@ -186,10 +197,18 @@ namespace WebApiCoreFx
             {
                 app.UseHsts();
             }
+
+            // 强制使用https重定向
+            // app.UseHttpsRedirection();
+
             // 放在useMvc前，否则报错
             app.UseSession();
             app.UseAuthentication();
             app.UseSwagger();
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
+            });
 
             //添加访问静态文件
             //app.UseStaticFiles();
@@ -200,12 +219,14 @@ namespace WebApiCoreFx
                 //RequestPath = folder // 静态文件请求路径
             });
 
+            // CORS 中间件必须配置为在对 UseRouting 和 UseEndpoints的调用之间执行
             app.UseCors("AllowAll");
-            app.UseSwaggerUI(o =>
-            {
-                o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
-            });
             app.UseHttpsRedirection();
+
+            #region 使用自定义中间件
+            app.UseMiddleware<CustomizeMiddleware.TestMiddleware>();
+            #endregion
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}");
