@@ -22,6 +22,7 @@ namespace LogicLayer.Service
         }
 
         [DothingAfterInterceptor]
+        [Filter.CustomizeFilter]
         public async Task<List<TbUser>> GetAsync(string nickName)
         {
             return await rep.GetListAsync(w => w.Nickname.Equals(nickName));

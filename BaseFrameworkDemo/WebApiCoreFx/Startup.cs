@@ -3,6 +3,7 @@ using AspectCore.Configuration;
 using AspectCore.Extensions.Autofac;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using CustomizeMiddleware;
 using DBModel.Entity;
 using IdentityModel;
 using log4net;
@@ -11,6 +12,7 @@ using log4net.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -115,6 +117,11 @@ namespace WebApiCoreFx
             }, 8);
             #endregion
 
+            #region 中间件
+            // 如果自定义Middleware继承了IMiddleware接口,必须在此注册，否则报错
+            // services.AddSingleton<TestMiddleware>();
+            #endregion
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
@@ -174,6 +181,8 @@ namespace WebApiCoreFx
                 //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
                 config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
                 config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
+                //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
+                //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForNameSpace("WebApiCoreFx.Controllers"));
                 config.ThrowAspectException = true;
             });
             #endregion
@@ -211,7 +220,6 @@ namespace WebApiCoreFx
             });
 
             //添加访问静态文件
-            //app.UseStaticFiles();
             string folder = CreateDirectory("FileFolder");
             app.UseStaticFiles(new StaticFileOptions()
             {
@@ -224,7 +232,23 @@ namespace WebApiCoreFx
             app.UseHttpsRedirection();
 
             #region 使用自定义中间件
-            app.UseMiddleware<CustomizeMiddleware.TestMiddleware>();
+            //app.UseMiddleware<CustomizeMiddleware.TestMiddleware>();
+            app.UseTestMiddleware();
+            // 匿名中间件
+            //app.Use(async (context, next) =>
+            //{
+            //    // Do work that doesn't write to the Response.
+            //    await next.Invoke();
+            //    // Do logging or other work that doesn't write to the Response.
+            //});
+            // 指定路径
+            //app.Map("/api/Values", builder =>
+            //{
+            //    builder.Run(async context =>
+            //    {
+            //        await context.Response.WriteAsync("app.Map指定/api/Values");
+            //    });
+            //});
             #endregion
 
             app.UseMvc(routes =>

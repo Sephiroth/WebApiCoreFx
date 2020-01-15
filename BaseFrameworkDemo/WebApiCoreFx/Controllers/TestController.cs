@@ -24,6 +24,11 @@ namespace WebApiCoreFx.Controllers
             this.cache = cache;
         }
 
+        /// <summary>
+        /// 查询用户
+        /// </summary>
+        /// <param name="nickName"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("Get")]
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)

@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
 using System.Threading.Tasks;
 
 namespace CustomizeMiddleware
 {
-    public class TestMiddleware
+    public class TestMiddleware //: IMiddleware
     {
         private readonly RequestDelegate _next;
 
@@ -21,7 +20,7 @@ namespace CustomizeMiddleware
         public async Task Invoke(HttpContext context)
         {
             //context.Request.Headers.Add("TestMiddleware", new Microsoft.Extensions.Primitives.StringValues(DateTime.Now.ToString()));
-            await _next?.Invoke(context);
+            await _next.Invoke(context);
             //await context.Response.WriteAsync("(TestMiddleware的输出处理)");
         }
 
