@@ -3,7 +3,10 @@ using System.Threading.Tasks;
 
 namespace CustomizeMiddleware
 {
-    public class TestMiddleware //: IMiddleware
+    /// <summary>
+    /// 自定义中间件
+    /// </summary>
+    public class TestMiddleware
     {
         private readonly RequestDelegate _next;
 
@@ -17,12 +20,24 @@ namespace CustomizeMiddleware
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             //context.Request.Headers.Add("TestMiddleware", new Microsoft.Extensions.Primitives.StringValues(DateTime.Now.ToString()));
             await _next.Invoke(context);
             //await context.Response.WriteAsync("(TestMiddleware的输出处理)");
         }
+    }
 
+    /// <summary>
+    /// 继承自IMiddleware的自定义中间件(必须在ConfigureServices中注册:services.AddSingleton<Test2Middleware>();)
+    /// </summary>
+    public class Test2Middleware : IMiddleware
+    {
+        public Test2Middleware() { }
+
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        {
+            await next.Invoke(context);
+        }
     }
 }

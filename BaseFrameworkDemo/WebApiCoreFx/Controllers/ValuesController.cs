@@ -1,5 +1,4 @@
-﻿using LogicLayer.Filter;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
@@ -25,7 +24,7 @@ namespace WebApiCoreFx.Controllers
 
         // POST api/values
         [HttpPost("{value}")]
-        [CustomizeFilter]
+        [AopDLL.Filter.CustomizeFilter]
         public string Post(string value)
         {
             return $"___{value}";

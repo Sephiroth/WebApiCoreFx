@@ -119,7 +119,7 @@ namespace WebApiCoreFx
 
             #region 中间件
             // 如果自定义Middleware继承了IMiddleware接口,必须在此注册，否则报错
-            // services.AddSingleton<TestMiddleware>();
+            services.AddSingleton<Test2Middleware>();
             #endregion
 
             services.AddMvc(options =>
@@ -181,7 +181,7 @@ namespace WebApiCoreFx
                 //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
                 config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
                 config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
-                //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
+                config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
                 //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForNameSpace("WebApiCoreFx.Controllers"));
                 config.ThrowAspectException = true;
             });
@@ -211,13 +211,16 @@ namespace WebApiCoreFx
             // app.UseHttpsRedirection();
 
             // 放在useMvc前，否则报错
-            app.UseSession();
+            // app.UseSession();
             app.UseAuthentication();
+
+            #region swagger文档
             app.UseSwagger();
             app.UseSwaggerUI(o =>
             {
                 o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
             });
+            #endregion
 
             //添加访问静态文件
             string folder = CreateDirectory("FileFolder");
@@ -229,10 +232,9 @@ namespace WebApiCoreFx
 
             // CORS 中间件必须配置为在对 UseRouting 和 UseEndpoints的调用之间执行
             app.UseCors("AllowAll");
-            app.UseHttpsRedirection();
-
+            
             #region 使用自定义中间件
-            //app.UseMiddleware<CustomizeMiddleware.TestMiddleware>();
+            app.UseMiddleware<CustomizeMiddleware.Test2Middleware>();
             app.UseTestMiddleware();
             // 匿名中间件
             //app.Use(async (context, next) =>

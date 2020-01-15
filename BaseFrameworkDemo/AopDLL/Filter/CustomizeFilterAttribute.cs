@@ -2,8 +2,11 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LogicLayer.Filter
+namespace AopDLL.Filter
 {
+    /// <summary>
+    /// 自定义特性，只能修饰action
+    /// </summary>
     public sealed class CustomizeFilterAttribute : ActionFilterAttribute
     {
         public CustomizeFilterAttribute() { }
