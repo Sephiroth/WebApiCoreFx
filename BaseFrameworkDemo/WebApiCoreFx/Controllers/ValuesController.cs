@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
@@ -31,9 +32,11 @@ namespace WebApiCoreFx.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, string value)
+        [HttpPut]
+        [Authorize]
+        public string Put(int id, string value)
         {
+            return $"{id}_{value}";
         }
 
         // DELETE api/values/5

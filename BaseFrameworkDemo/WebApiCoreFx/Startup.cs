@@ -61,6 +61,16 @@ namespace WebApiCoreFx
             //services.AddTransient<IUserService, UserService>();
             #endregion
 
+            #region CSRF
+            services.AddAntiforgery(option =>
+            {
+                option.Cookie.Name = "CSRF-TOKEN";
+                option.Cookie.SameSite = SameSiteMode.Lax; ;
+                option.FormFieldName = "CustomerFieldName";
+                option.HeaderName = "CSRF-TOKEN";
+            });
+            #endregion
+
             #region 身份验证
             _ = services.AddAuthentication(s =>
             {
@@ -232,7 +242,7 @@ namespace WebApiCoreFx
 
             // CORS 中间件必须配置为在对 UseRouting 和 UseEndpoints的调用之间执行
             app.UseCors("AllowAll");
-            
+
             #region 使用自定义中间件
             app.UseMiddleware<CustomizeMiddleware.Test2Middleware>();
             app.UseTestMiddleware();

@@ -12,7 +12,6 @@ namespace WebApiCoreFx.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class TestController : ControllerBase
     {
         private readonly IUserService userServ;
@@ -32,6 +31,7 @@ namespace WebApiCoreFx.Controllers
         [HttpGet]
         [Route("Get")]
         [AopDLL.Filter.CustomizeFilter]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)
         {
             return await userServ.GetAsync(nickName);
