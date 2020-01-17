@@ -1,4 +1,5 @@
 ﻿using IdentityModel;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,12 +13,15 @@ namespace LogicLayer.Util
     /// </summary>
     public class AuthorizationUtil
     {
-        internal static SymmetricSecurityKey SymmetricKey { get; private set; }
+        internal static SymmetricSecurityKey SymmetricKey { get; set; }
         internal static SigningCredentials Credentials { get; private set; }
 
         static AuthorizationUtil()
         {
-            SymmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("MicroHealth_LSH_KEY"));
+            var builder = new ConfigurationBuilder();
+            builder.AddJsonFile("appsettings.json", false, true);
+            IConfiguration configuration = builder.Build();
+            SymmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("Authentication").GetValue<string>("SymmetricKey")));
             Credentials = new SigningCredentials(SymmetricKey, SecurityAlgorithms.HmacSha256Signature);
         }
 
@@ -37,7 +41,7 @@ namespace LogicLayer.Util
             if (string.IsNullOrEmpty(role)) { role = Guid.NewGuid().ToString(); }
             if (string.IsNullOrEmpty(address)) { address = Guid.NewGuid().ToString(); }
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            DateTime authTime = DateTime.UtcNow; // 生成时间
+            DateTime authTime = DateTime.Now; // 生成时间
             DateTime expiresAt = authTime.AddMinutes(minutes); // 到期时间
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -48,8 +52,9 @@ namespace LogicLayer.Util
                     new Claim(JwtClaimTypes.Id, id),
                     new Claim(JwtClaimTypes.Name, name),
                     new Claim(JwtClaimTypes.Role, role),
-                    new Claim(JwtClaimTypes.Address, address),
+                    new Claim(JwtClaimTypes.Address, address)
                 }),
+                IssuedAt = authTime,
                 Expires = expiresAt,
                 SigningCredentials = Credentials
             };
@@ -79,6 +84,7 @@ namespace LogicLayer.Util
                 ValidIssuer = readToken.Issuer,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+                RequireExpirationTime = true,
                 IssuerSigningKey = SymmetricKey
             };
             // Token通过秘钥解析出来的SecurityToken
@@ -87,15 +93,16 @@ namespace LogicLayer.Util
             try
             {
                 claimsIdentity = tokenHandler.ValidateToken(token, param, out sToken).Identity as ClaimsIdentity; //ClaimsPrincipal ce
-                rs = sToken != null && claimsIdentity?.Actor != null;
+                rs = sToken != null;
             }
             catch { }
             if (rs)
-            {   // 验证时间是否过期
-                validTime = sToken.ValidTo - DateTime.Now;
+            {   // 验证时间是否过期(ValidTo默认用utc解析)
+                validTime = sToken.ValidTo - DateTime.UtcNow;
                 rs &= (validTime.TotalSeconds > 0);
             }
             return rs;
         }
+
     }
 }

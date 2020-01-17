@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -28,18 +28,17 @@ namespace WebApiCoreFx.Controllers
         {
             TbUser user = await rep.GetEntityAsync(s => s.Name.Equals(name));
             if (user == null)
-                return NotFound($"用户名\"{name}\"不存在");
-
-            if (!user.Pwd.Equals(WxAppEncryptUtil.MD5(pwd)))
+                return NotFound($"用户名'{name}'不存在");
+            if (!WxAppEncryptUtil.MD5(pwd).Equals(user.Pwd))
                 return ValidationProblem(new ValidationProblemDetails() { Detail = "密码错误" });
 
-            string token = AuthorizationUtil.GetToken(30, user.Id, user.Name, user.Phone, user.CarNum);
+            string token = AuthorizationUtil.GetToken(30, user.Id, user.Name, "user", user.CarNum);
             DateTime authTime = DateTime.Now;
             DateTime expiresAt = authTime.AddMinutes(30);
             return Ok(new
             {
                 access_token = token,
-                token_type = "Jwt",
+                token_type = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
                 profile = new
                 {
                     sid = user.Id,
@@ -50,6 +49,7 @@ namespace WebApiCoreFx.Controllers
             });
         }
 
+        [HttpPost]
         public async Task<TbUser> WxLoginAsync(WxLoginParam loginParam)
         {
             TbUser user = null;
@@ -65,5 +65,6 @@ namespace WebApiCoreFx.Controllers
             }
             return user;
         }
+
     }
 }

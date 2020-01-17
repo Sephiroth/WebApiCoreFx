@@ -1,27 +1,20 @@
-﻿using LogicLayer.Util;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Security.Claims;
-using IdentityModel;
 
 namespace LogicLayer.Attribute
 {
-    public class CustomizeAuthorizeAttribute : IAuthorizationFilter
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+    public sealed class CustomizeAuthorizeAttribute : AuthorizeAttribute
     {
-        public void OnAuthorization(AuthorizationFilterContext context)
+        public string Permission { get; set; }
+
+        public CustomizeAuthorizeAttribute() { }
+
+        public CustomizeAuthorizeAttribute(string permission)
         {
-            bool rs = context.HttpContext.Request.Headers.TryGetValue("token", out Microsoft.Extensions.Primitives.StringValues strValues);
-            if (rs)
-            {
-                rs = AuthorizationUtil.VerifyToken(strValues.ToString(), out TimeSpan validTime, out System.Security.Claims.ClaimsIdentity claimsIdentity);
-                if (rs)
-                {
-                    List<Claim> list = new List<Claim>(claimsIdentity.Claims);
-                    list.Find(s=>s.ValueType.Equals(JwtClaimTypes.Role));
-                }
-            }
+            Permission = permission;
         }
     }
 }

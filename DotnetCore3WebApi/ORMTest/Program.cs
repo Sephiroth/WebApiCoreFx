@@ -20,8 +20,8 @@ namespace ORMTest
             #endregion
 
             #region Span<> 作为全局变量，或在异步中声明为变量报错
-            Span<byte> span = Encoding.UTF8.GetBytes("Hello World!").AsSpan();
-            Memory<byte> memory = new Memory<byte>();
+            //Span<byte> span = Encoding.UTF8.GetBytes("Hello World!").AsSpan();
+            //Memory<byte> memory = new Memory<byte>();
 
             #endregion
 

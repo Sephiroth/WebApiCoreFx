@@ -33,8 +33,8 @@ namespace WebApiCoreFx
 {
     public class Startup
     {
-        public static SymmetricSecurityKey symmetricKey { get; private set; }
-        public static readonly LoggerFactory loggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
+        private SymmetricSecurityKey symmetricKey;
+        public static readonly LoggerFactory loggerFactory = new LoggerFactory();
         public static ILoggerRepository repository { get; set; }
 
         public Startup(IConfiguration configuration)
@@ -43,7 +43,7 @@ namespace WebApiCoreFx
             db_cdzContext.DbConnStr = Configuration.GetConnectionString("MysqlConnection");
             repository = LogManager.CreateRepository("NETCoreRepository");
             XmlConfigurator.Configure(repository, new FileInfo("Log4net.config"));
-            symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("need_to_get_this_from_enviroment"));
+            symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").GetValue<string>("SymmetricKey")));
         }
 
         public IConfiguration Configuration { get; }
@@ -100,6 +100,7 @@ namespace WebApiCoreFx
                         }
                     };
                 });
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
             #endregion
 
             #region 限制上传文件
@@ -135,6 +136,7 @@ namespace WebApiCoreFx
             services.AddMvc(options =>
                 {
                     options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
+                    options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
                     options.EnableEndpointRouting = false;//default true
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

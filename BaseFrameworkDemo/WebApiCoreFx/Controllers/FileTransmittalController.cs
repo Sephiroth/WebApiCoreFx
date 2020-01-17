@@ -15,7 +15,7 @@ namespace WebApiCoreFx.Controllers
     /// <summary>
     /// 文件传输接口
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class FileTransmittalController : ControllerBase
     {
@@ -67,7 +67,7 @@ namespace WebApiCoreFx.Controllers
         /// <param name="filename"></param>
         /// <param name="respType"></param>
         /// <returns></returns>
-        [HttpGet("DownloadFileAsync")]
+        [HttpGet]
         public async Task<IActionResult> DownloadFileAsync([FromQuery]string filename, [FromQuery]string respType)
         {
             string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"FileFolder/{filename}");

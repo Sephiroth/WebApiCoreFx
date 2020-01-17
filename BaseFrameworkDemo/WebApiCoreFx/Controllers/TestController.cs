@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
-    [Route("api/[controller]")]
+    [LogicLayer.Attribute.CustomizeAuthorizeAttribute]
     [ApiController]
+    [Route("api/[controller]/[action]")]
     public class TestController : ControllerBase
     {
         private readonly IUserService userServ;
         public readonly IDistributedCache cache;
-
+        
         public TestController(IUserService userServ, IDistributedCache cache)
         {
             this.userServ = userServ;
@@ -29,16 +30,13 @@ namespace WebApiCoreFx.Controllers
         /// <param name="nickName"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Get")]
         [AopDLL.Filter.CustomizeFilter]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)
         {
             return await userServ.GetAsync(nickName);
         }
 
         [HttpPost]
-        [Route("Post")]
         public async Task<ActionResult<bool>> Post([FromBody]List<TbUser> list)
         {
             return await userServ.AddAsync(list);
