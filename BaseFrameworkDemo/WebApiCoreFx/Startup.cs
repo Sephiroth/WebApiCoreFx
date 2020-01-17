@@ -95,12 +95,11 @@ namespace WebApiCoreFx
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Query["AccessToken"];
+                            context.Token = context.Request.Headers["token"];
                             return Task.CompletedTask;
                         }
                     };
                 });
-            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
             #endregion
 
             #region 限制上传文件

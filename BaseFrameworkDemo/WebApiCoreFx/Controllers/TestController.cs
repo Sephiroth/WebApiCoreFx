@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
-    [LogicLayer.Attribute.CustomizeAuthorizeAttribute]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class TestController : ControllerBase
     {
         private readonly IUserService userServ;
         public readonly IDistributedCache cache;
-        
+
         public TestController(IUserService userServ, IDistributedCache cache)
         {
             this.userServ = userServ;
