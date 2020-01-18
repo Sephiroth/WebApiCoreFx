@@ -31,35 +31,42 @@ namespace WebApiCoreFx.Controllers
         /// </summary>
         /// <returns></returns>
         //[HttpPost("UploadAsync")]
-        //public async Task<IActionResult> UploadAsync([FromForm]string fileName)
-        //{
-        //    // 获取boundary
-        //    string boundary = HeaderUtilities.RemoveQuotes(MediaTypeHeaderValue.Parse(Request.ContentType).Boundary).Value;
-        //    // 得到reader
-        //    MultipartReader reader = new MultipartReader(boundary, HttpContext.Request.Body);
-        //    // { BodyLengthLimit = 2000 };
-        //    MultipartSection section = await reader.ReadNextSectionAsync();
-        //    fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"FileFolder/{fileName}");
-        //    int hasWrite = 0;
-        //    using (FileStream fs = new FileStream(fileName, FileMode.Create))
-        //    {
-        //        while (section != null)
-        //        {
-        //            byte[] buff = new byte[BUFF_SIZE];
-        //            int len = (int)section.Body.Length;
-        //            int readCount = await section.Body.ReadAsync(buff, 0, len);
-        //            await fs.WriteAsync(buff, hasWrite, readCount);
-        //            //    .ContinueWith(async action =>
-        //            //{
-        //            //    await section.Body.FlushAsync();
-        //            //});
-        //            await section.Body.FlushAsync();
-        //            hasWrite += readCount;
-        //            section = await reader.ReadNextSectionAsync();
-        //        }
-        //    }
-        //    return Ok(true);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> UploadAsync()
+        {
+            var data = Request.Form.Files["data"];
+            string lastModified = Request.Form["lastModified"].ToString();
+            var total = Request.Form["total"];
+            var fileName = Request.Form["fileName"];
+            var index = Request.Form["index"];
+            string temporary = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", lastModified);//临时保存分块的目录
+
+            try
+            {
+                if (!Directory.Exists(temporary))
+                    Directory.CreateDirectory(temporary);
+                string filePath = Path.Combine(temporary, index.ToString());
+                if (!Convert.IsDBNull(data))
+                {
+                    await Task.Run(() =>
+                    {
+                        FileStream fs = new FileStream(filePath, FileMode.Create);
+                        data.CopyTo(fs);
+                    });
+                }
+                bool mergeOk = false;
+                if (total == index)
+                {
+                    mergeOk = await FileMerge(lastModified, fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Directory.Delete(temporary);//删除文件夹
+                throw ex;
+            }
+            return Ok(true);
+        }
 
         /// <summary>
         /// 下载大文件
@@ -108,6 +115,30 @@ namespace WebApiCoreFx.Controllers
                 }
             }
             return Ok("下载完成");
+        }
+
+
+        public async Task<bool> FileMerge(string lastModified, string fileName)
+        {
+            string temporary = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", lastModified);//临时文件夹
+            string fileExt = Path.GetExtension(fileName);//获取文件后缀
+            string[] files = Directory.GetFiles(temporary);//获得下面的所有文件
+            if (files == null || files.Length < 1)
+                return false;
+
+            string finalPath = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", $"{DateTime.Now.ToString("yyMMddHHmmss")}{fileExt}");
+            using (var fs = new FileStream(finalPath, FileMode.Create))
+            {
+                foreach (var part in files.OrderBy(x => x.Length).ThenBy(x => x))//排一下序，保证从0-N Write
+                {
+                    byte[] bytes = System.IO.File.ReadAllBytes(part);
+                    await fs.WriteAsync(bytes, 0, bytes.Length);
+                    bytes = null;
+                    System.IO.File.Delete(part);//删除分块
+                }
+            }
+            Directory.Delete(temporary);//删除文件夹
+            return true;
         }
 
     }

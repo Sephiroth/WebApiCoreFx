@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace LogicLayer.Attribute
@@ -18,17 +19,19 @@ namespace LogicLayer.Attribute
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (context.Filters.Any(item => item is IAllowAnonymousFilter))
-                return;
-
             if (!(context.ActionDescriptor is ControllerActionDescriptor))
                 return;
 
-            if (!context.Filters.Any(item => item is IAuthorizationFilter))
+            if (context.Filters.Any(item => item is IAllowAnonymousFilter))
                 return;
 
             #region 根据反射获取自定义验证特性,判断是否需要验证
             ControllerActionDescriptor cad = context.ActionDescriptor as ControllerActionDescriptor;
+            bool r1 = cad.ControllerTypeInfo.CustomAttributes.Any(s => s.AttributeType.Name.Equals("AuthorizeAttribute"));
+            bool r2 = cad.MethodInfo.CustomAttributes.Any(s => s.AttributeType.Name.Equals("AuthorizeAttribute"));
+            if (!r1 && !r2)
+                return;
+
             string actionName = cad.ActionName;
             string controllerName = cad.ControllerName;
             #endregion

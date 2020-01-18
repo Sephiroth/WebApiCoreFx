@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Threading.Tasks;
 
 namespace CustomizeMiddleware
@@ -12,7 +13,7 @@ namespace CustomizeMiddleware
 
         public TestMiddleware(RequestDelegate next)
         {
-            _next = next;
+            _next = next ?? throw new ArgumentNullException(nameof(next));
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace CustomizeMiddleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            await next.Invoke(context); 
+            await next.Invoke(context);
         }
     }
 }

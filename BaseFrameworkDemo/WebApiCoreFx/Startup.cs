@@ -105,7 +105,8 @@ namespace WebApiCoreFx
             #region 限制上传文件
             services.Configure<FormOptions>(options =>
             {
-                options.MultipartBodyLengthLimit = long.MaxValue;
+                // 限制上传文件的大小
+                options.MultipartBodyLengthLimit = int.MaxValue;
             });
             #endregion
 
