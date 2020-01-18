@@ -255,14 +255,19 @@ namespace WebApiCoreFx
             //    await next.Invoke();
             //    // Do logging or other work that doesn't write to the Response.
             //});
-            // 指定路径
-            //app.Map("/api/Values", builder =>
+            // 指定路径,多层次匹配
+            //app.Map("/api", level1Builder =>
             //{
-            //    builder.Run(async context =>
+            //    level1Builder.Map("/Values", level2Builder =>
             //    {
-            //        await context.Response.WriteAsync("app.Map指定/api/Values");
+            //        level2Builder.Run(async context =>
+            //        {
+            //            await context.Response.WriteAsync("app.Map指定/api/Values");
+            //        });
             //    });
             //});
+            // 指定满足条件时触发
+            //app.MapWhen(context => context.Request.Headers.ContainsKey("branch"), HandleBranch);
             #endregion
 
             app.UseMvc(routes =>
@@ -284,6 +289,15 @@ namespace WebApiCoreFx
             if (!Directory.Exists(directory))
                 info = Directory.CreateDirectory(directory);
             return info?.FullName ?? directory;
+        }
+
+        private void HandleBranch(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                bool branchVer = context.Request.Headers.ContainsKey("branch");
+                await context.Response.WriteAsync($"Branch used = {branchVer}");
+            });
         }
 
     }
