@@ -67,7 +67,7 @@ namespace WebApiCoreFx
                 option.Cookie.Name = "CSRF-TOKEN";
                 option.Cookie.SameSite = SameSiteMode.Lax; ;
                 option.FormFieldName = "CustomerFieldName";
-                option.HeaderName = "CSRF-TOKEN";
+                option.HeaderName = "X-XSRF-TOKEN";//Request.Header包含X-XSRF-TOKEN才能正常请求
             });
             #endregion
 
@@ -138,6 +138,7 @@ namespace WebApiCoreFx
                     options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
                     options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
                     options.EnableEndpointRouting = false;//default true
+                    //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession();
