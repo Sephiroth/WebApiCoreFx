@@ -3,19 +3,12 @@ using System.Collections.Generic;
 
 namespace UserCenterApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UserTestController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] { "apiTestResult", "confirm" };
-        }
-
         // GET api/values/5
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult<string> Get(int id)
         {
             return $"apiTestResult:{id}";
@@ -28,13 +21,13 @@ namespace UserCenterApi.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public void Put(int id, [FromBody] string value)
         {
         }
 
         // DELETE api/values/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public void Delete(int id)
         {
         }

@@ -94,7 +94,10 @@ namespace UserCenterApi
 
             app.UseHttpsRedirection();
             app.UseConsul();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}");
+            });
             app.UseAuthentication();
 
             #region 服务注册和注销(Consul)
