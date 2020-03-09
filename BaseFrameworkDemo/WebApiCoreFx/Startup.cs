@@ -133,6 +133,7 @@ namespace WebApiCoreFx
             services.AddSingleton<Test2Middleware>();
             #endregion
 
+            services.AddHttpClient();
             services.AddMvc(options =>
                 {
                     options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
@@ -206,7 +207,7 @@ namespace WebApiCoreFx
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) // , ILoggerFactory loggerFactory
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,ILoggerFactory logger) // , ILoggerFactory loggerFactory
         {
             //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             //loggerFactory.AddDebug();

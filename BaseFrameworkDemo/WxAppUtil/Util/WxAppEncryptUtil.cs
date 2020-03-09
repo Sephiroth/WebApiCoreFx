@@ -1,10 +1,10 @@
-﻿using DBModel.WxModel;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using WxAppUtil.Model;
 
-namespace LogicLayer.Util
+namespace WxAppUtil.Util
 {
     public class WxAppEncryptUtil
     {
@@ -19,7 +19,7 @@ namespace LogicLayer.Util
         {
             var bytearr = UTF8Encoding.Default.GetBytes(txt);
             string encTxt = BitConverter.ToString(md5.ComputeHash(bytearr), 4, 8);
-            encTxt = encTxt.Replace("-", "");
+            encTxt = encTxt.Replace("-", string.Empty);
             return encTxt;
         }
 

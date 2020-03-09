@@ -1,5 +1,4 @@
 ﻿using DBModel.Entity;
-using DBModel.WxModel;
 using IDBLayer.Interface;
 using IdentityModel;
 using LogicLayer.Util;
@@ -7,8 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WxAppUtil.Model;
+using WxAppUtil.Util;
 
 namespace WebApiCoreFx.Controllers
 {
@@ -17,10 +19,12 @@ namespace WebApiCoreFx.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IRepository<TbUser> rep;
+        private readonly IHttpClientFactory clientFactory;
 
-        public LoginController(IRepository<TbUser> rep)
+        public LoginController(IRepository<TbUser> rep, IHttpClientFactory clientFactory)
         {
             this.rep = rep;
+            this.clientFactory = clientFactory;
         }
 
         [HttpPost]
@@ -53,14 +57,15 @@ namespace WebApiCoreFx.Controllers
         public async Task<TbUser> WxLoginAsync(WxLoginParam loginParam)
         {
             TbUser user = null;
-            OpenIdParam openIdParam = await WxUtils.GetOpenid(loginParam);
+            string phone = null;
+            // 使用IHttpClientFactory创建的HttpClient
+            OpenIdParam openIdParam = await WxUtils.GetOpenIdAsync(loginParam, clientFactory.CreateClient());
             if (openIdParam != null && !string.IsNullOrEmpty(openIdParam.session_key))
             {
                 WxPhoneModel wxPhoneModel = WxAppEncryptUtil.GetEncryptedDataStr(loginParam.EncryptedData, openIdParam.session_key, loginParam.Iv);
                 if (wxPhoneModel != null)
                 {
-                    string phone = wxPhoneModel.PurePhoneNumber ?? wxPhoneModel.PhoneNumber;
-                    // Todo : 根据手机号处理用户信息
+                    phone = wxPhoneModel.PurePhoneNumber ?? wxPhoneModel.PhoneNumber;
                 }
             }
             return user;

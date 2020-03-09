@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DBModel.WxModel
+﻿namespace WxAppUtil.Model
 {
     public class WxLoginParam
     {

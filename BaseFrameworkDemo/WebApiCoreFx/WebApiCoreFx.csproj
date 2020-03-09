@@ -53,6 +53,7 @@
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
     <ProjectReference Include="..\ILogicLayer\ILogicLayer.csproj" />
     <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
+    <ProjectReference Include="..\WxAppUtil\WxAppUtil.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace DBModel.WxModel
+﻿namespace WxAppUtil.Model
 {
     public class WaterMarkModel
     {
