@@ -2,7 +2,10 @@
 using DBModel.Entity;
 using IDBLayer.Interface;
 using ILogicLayer.Interface;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace LogicLayer.Service
@@ -18,14 +21,19 @@ namespace LogicLayer.Service
 
         public async Task<bool> AddAsync(List<TbUser> list)
         {
-            return await rep.AddListAsync(list);
+            return await rep.AddListAsync(list.ToArray());
         }
 
         [DothingAfterInterceptor]
         public async Task<List<TbUser>> GetAsync(string nickName)
         {
-            return await rep.GetListAsync(w => w.Nickname.Equals(nickName));
+            object num = new object();
+            return await rep.GetListAsync(w => w.Nickname.Equals(nickName), 0, byte.MaxValue, num);
         }
 
+        public async Task<bool> UpdateAsync(TbUser user)
+        {
+            return await rep.ModifyAsync(user);
+        }
     }
 }

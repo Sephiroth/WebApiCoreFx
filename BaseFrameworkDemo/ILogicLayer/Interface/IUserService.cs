@@ -11,5 +11,7 @@ namespace ILogicLayer.Interface
 
         [DothingBeforeInterceptor]
         Task<List<TbUser>> GetAsync(string nickName);
+
+        Task<bool> UpdateAsync(TbUser user);
     }
 }
