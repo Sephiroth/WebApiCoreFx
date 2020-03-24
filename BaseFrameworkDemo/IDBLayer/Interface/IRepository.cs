@@ -44,7 +44,7 @@ namespace IDBLayer.Interface
         /// </summary>
         /// <param name="sql"></param>
         /// <returns></returns>
-        Task<int> ExecuteSqlAsync([NotNull]string sql, params object[] parameters);
+        Task<int> ExecuteSqlAsync([NotNull]FormattableString sql, params object[] parameters);
 
         /// <summary>
         /// 修改(异步)

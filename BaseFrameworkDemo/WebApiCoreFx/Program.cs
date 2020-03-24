@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore;
+﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace WebApiCoreFx
 {
@@ -10,13 +13,25 @@ namespace WebApiCoreFx
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-            .ConfigureKestrel((context, options) =>
+        public static IHostBuilder CreateWebHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+            .ConfigureWebHostDefaults(webBuilder =>
             {
-                options.Limits.MaxRequestBodySize = null;//5242880;//设置应用服务器Kestrel请求体最大为5MB
-            })
-            .UseStartup<Startup>();
-        //.UseKestrel(option=> { option.ListenAnyIP(10010); });
+                webBuilder.ConfigureKestrel(serverOptions =>
+                {
+                    serverOptions.AllowSynchronousIO = true;//启用同步 IO
+                })
+                .UseStartup<Startup>()
+                //.UseUrls("http://localhost:8081")
+                .ConfigureLogging((hostingContext, builder) =>
+                {
+                    builder.ClearProviders();
+                    builder.SetMinimumLevel(LogLevel.Trace);
+                    builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    builder.AddConsole();
+                    builder.AddDebug();
+                });
+            });
     }
 }

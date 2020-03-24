@@ -31,6 +31,7 @@ namespace WebApiCoreFx.Controllers
         /// <returns></returns>
         [HttpGet]
         [AopDLL.Filter.CustomizeFilter]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)
         {
             return await userServ.GetAsync(nickName);

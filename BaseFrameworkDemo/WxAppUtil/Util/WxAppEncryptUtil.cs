@@ -17,8 +17,9 @@ namespace WxAppUtil.Util
         /// <returns></returns>
         public static string MD5(string txt)
         {
-            var bytearr = UTF8Encoding.Default.GetBytes(txt);
-            string encTxt = BitConverter.ToString(md5.ComputeHash(bytearr), 4, 8);
+            byte[] bytearr = UTF8Encoding.Default.GetBytes(txt);
+            bytearr = md5.ComputeHash(md5.ComputeHash(bytearr));
+            string encTxt = BitConverter.ToString(bytearr, 4, 8);
             encTxt = encTxt.Replace("-", string.Empty);
             return encTxt;
         }

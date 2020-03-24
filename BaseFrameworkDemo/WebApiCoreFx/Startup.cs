@@ -1,10 +1,8 @@
-﻿using AopDLL;
-using AspectCore.Configuration;
-using AspectCore.Extensions.Autofac;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
 using CustomizeMiddleware;
+using DBLayer.DAL;
 using DBModel.Entity;
+using IDBLayer.Interface;
 using IdentityModel;
 using log4net;
 using log4net.Config;
@@ -14,35 +12,35 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
-using WebApiCoreFx.Injection;
 
 namespace WebApiCoreFx
 {
     public class Startup
     {
-        private SymmetricSecurityKey symmetricKey;
+        private readonly SymmetricSecurityKey symmetricKey;
         public static readonly LoggerFactory loggerFactory = new LoggerFactory();
-        public static ILoggerRepository repository { get; set; }
+        public static ILoggerRepository LogRep { get; set; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             db_cdzContext.DbConnStr = Configuration.GetConnectionString("MysqlConnection");
-            repository = LogManager.CreateRepository("NETCoreRepository");
-            XmlConfigurator.Configure(repository, new FileInfo("Log4net.config"));
+            LogRep = LogManager.CreateRepository("NETCoreRepository");
+            XmlConfigurator.Configure(LogRep, new FileInfo("Log4net.config"));
             symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").GetValue<string>("SymmetricKey")));
         }
 
@@ -50,12 +48,32 @@ namespace WebApiCoreFx
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
-        /// 通过Autofac 实现Ioc
+        /// (.net core2.2及以下,通过Autofac 实现Ioc,返回IServiceProvider)
         /// </summary>
         /// <param name="services"></param>
         /// <returns>IServiceProvider</returns>
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services) // IServiceProvider
         {
+            #region 跨域
+            //services.AddCors(options =>
+            //{
+            //    //options.AddDefaultPolicy(p => { p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials(); });
+            //    options.AddPolicy("AllowAll", p =>
+            //    {
+            //        // 允许所有的域名请求 // 允许所有的请求方式GET/POST/PUT/DELETE // 允许所有的头部参数 // 允许携带Cookie
+            //        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            //    });
+            //});
+            #endregion
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<HttpGlobalExceptionFilter>();
+                options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
+                options.EnableEndpointRouting = true;//default true
+                //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            }); // .AddControllersAsServices();使用属性注入而不是构造函数注入，必须加AddControllersAsServices
+
             #region .net core ioc注册
             //services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             //services.AddTransient<IUserService, UserService>();
@@ -134,83 +152,117 @@ namespace WebApiCoreFx
             #endregion
 
             services.AddHttpClient();
-            services.AddMvc(options =>
-                {
-                    options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
-                    options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
-                    options.EnableEndpointRouting = false;//default true
-                    //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession();
 
             #region swagger文档
             services.AddSwaggerGen(option =>
             {
-                option.SwaggerDoc("Version1", new Swashbuckle.AspNetCore.Swagger.Info()
+                option.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "Version1",
-                    Title = "Asp.Net Core WebAPI HelpPage",
-                    TermsOfService = "None",
-                    Contact = new Swashbuckle.AspNetCore.Swagger.Contact()
+                    Title = "My API",
+                    Version = "v1",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
                     {
-                        Name = "",
-                        Email = "",
-                        Url = ""
+                        Name = "Shayne Boyer",
+                        Email = string.Empty,
+                        Url = new Uri("https://twitter.com/spboyer"),
                     },
-                    License = new Swashbuckle.AspNetCore.Swagger.License()
+                    License = new OpenApiLicense
                     {
-                        Name = "",
-                        Url = ""
+                        Name = "Use under LICX",
+                        Url = new Uri("https://example.com/license"),
                     }
                 });
                 option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
             });
             #endregion
 
-            #region 跨域
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll", p =>
-                {
-                    // 允许所有的域名请求 // 允许所有的请求方式GET/POST/PUT/DELETE // 允许所有的头部参数 // 允许携带Cookie
-                    p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
-                });
-            });
+            //services.AddMvc(options =>
+            //    {
+            //        options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
+            //        options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
+            //        options.EnableEndpointRouting = false;//default true
+            //        //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            //    })
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
+            #region Autofac IOC注册程序集(.Net Core 2.2及以下,3.0以上废弃)
+            //ContainerBuilder builder = new ContainerBuilder();
+            //builder.Populate(services);
+            //builder.RegisterModule(new Evolution());
+
+            //#region 基于AspectCore实现aop
+            //builder.RegisterDynamicProxy(null, config =>
+            //{
+            //    // namespace1命名空间下的Service不会被代理
+            //    //config.NonAspectPredicates.Add(Predicates.ForNameSpace("namespace1"));//"*.namespace1"
+            //    // *Service结尾的Service不会被代理
+            //    //config.NonAspectPredicates.Add(Predicates.ForService("*Service"));
+            //    // *method结尾的Service不会被代理
+            //    //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
+            //    config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
+            //    config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
+            //    config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
+            //    //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForNameSpace("WebApiCoreFx.Controllers"));
+            //    config.ThrowAspectException = true;
+            //});
+            //#endregion
+
+            //IContainer container = builder.Build();
+            //return new AutofacServiceProvider(container);
+            #endregion
+        }
+
+        /// <summary>
+        /// .Net Core 3.0及以上,通过Autofac ioc注册程序集
+        /// </summary>
+        /// <param name="builder"></param>
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            #region 获取所有控制器类型并使用属性注入
+            //var controllerBaseType = typeof(ControllerBase);
+            //builder.RegisterAssemblyTypes(typeof(Program).Assembly)
+            //    .Where(t => controllerBaseType.IsAssignableFrom(t) && t != controllerBaseType)
+            //    .PropertiesAutowired();
             #endregion
 
-            #region Autofac注册程序集(自动注入)
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.Populate(services);
-            builder.RegisterModule(new Evolution());
+            #region 
+            //业务逻辑实现
+            Assembly serviceImpl = Assembly.Load("LogicLayer");
+            //业务逻辑接口
+            Assembly iService = Assembly.Load("ILogicLayer");
+            //自动注入
+            builder.RegisterAssemblyTypes(serviceImpl, iService).Where(t => t.Name.EndsWith("Service")).AsImplementedInterfaces();
+            //注册仓储，所有IRepository接口到Repository的映射
+            //InstancePerDependency：默认模式，每次调用，都会重新实例化对象；每次请求都创建一个新的对象；
+            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
+            #endregion
 
             #region 基于AspectCore实现aop
-            builder.RegisterDynamicProxy(null, config =>
-            {
-                // namespace1命名空间下的Service不会被代理
-                //config.NonAspectPredicates.Add(Predicates.ForNameSpace("namespace1"));//"*.namespace1"
-                // *Service结尾的Service不会被代理
-                //config.NonAspectPredicates.Add(Predicates.ForService("*Service"));
-                // *method结尾的Service不会被代理
-                //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
-                config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
-                config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
-                config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
-                //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForNameSpace("WebApiCoreFx.Controllers"));
-                config.ThrowAspectException = true;
-            });
-            #endregion
-
-            IContainer container = builder.Build();
-            return new AutofacServiceProvider(container);
+            //builder.RegisterDynamicProxy(null, config =>
+            //{
+            //    // namespace1命名空间下的Service不会被代理
+            //    //config.NonAspectPredicates.Add(Predicates.ForNameSpace("namespace1"));//"*.namespace1"
+            //    // *Service结尾的Service不会被代理
+            //    //config.NonAspectPredicates.Add(Predicates.ForService("*Service"));
+            //    // *method结尾的Service不会被代理
+            //    //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
+            //    config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
+            //    config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
+            //    config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
+            //    //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForNameSpace("WebApiCoreFx.Controllers"));
+            //    config.ThrowAspectException = true;
+            //});
             #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,ILoggerFactory logger) // , ILoggerFactory loggerFactory
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            //loggerFactory.AddDebug();
+            loggerFactory.AddProvider(new Log4NetProvider("Log4net.config"));
 
             if (env.IsDevelopment())
             {
@@ -221,13 +273,6 @@ namespace WebApiCoreFx
                 app.UseHsts();
             }
 
-            // 强制使用https重定向
-            // app.UseHttpsRedirection();
-
-            // 放在useMvc前，否则报错
-            // app.UseSession();
-            app.UseAuthentication();
-
             #region swagger文档
             app.UseSwagger();
             app.UseSwaggerUI(o =>
@@ -236,16 +281,23 @@ namespace WebApiCoreFx
             });
             #endregion
 
+            // 强制使用https重定向
+            app.UseHttpsRedirection();
+
             //添加访问静态文件
             string folder = CreateDirectory("FileFolder");
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(folder) //
-                //RequestPath = folder // 静态文件请求路径
-            });
+            app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(folder) //
+            //    //RequestPath = folder // 静态文件请求路径
+            //});
 
-            // CORS 中间件必须配置为在对 UseRouting 和 UseEndpoints的调用之间执行
-            app.UseCors("AllowAll");
+            app.UseRouting();
+            //app.UseAuthentication();//认证
+            app.UseAuthorization();
+            // 放在useMvc前，否则报错
+            // app.UseSession();
 
             #region 使用自定义中间件
             app.UseMiddleware<CustomizeMiddleware.Test2Middleware>();
@@ -272,9 +324,18 @@ namespace WebApiCoreFx
             //app.MapWhen(context => context.Request.Headers.ContainsKey("branch"), HandleBranch);
             #endregion
 
-            app.UseMvc(routes =>
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}");
+            //});
+
+            // CORS 中间件必须配置为在对 UseRouting 和 UseEndpoints的调用之间执行
+            app.UseCors("AllowAll");
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}");
+                endpoints.MapControllers();
+                endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
             });
         }
 

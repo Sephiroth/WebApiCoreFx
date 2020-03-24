@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
 
 namespace LogicLayer.Attribute
@@ -30,6 +29,9 @@ namespace LogicLayer.Attribute
             bool r1 = cad.ControllerTypeInfo.CustomAttributes.Any(s => s.AttributeType.Name.Equals("AuthorizeAttribute"));
             bool r2 = cad.MethodInfo.CustomAttributes.Any(s => s.AttributeType.Name.Equals("AuthorizeAttribute"));
             if (!r1 && !r2)
+                return;
+
+            if (cad.MethodInfo.CustomAttributes.Any(s => s.AttributeType.Name.Equals("AllowAnonymousAttribute")))
                 return;
 
             string actionName = cad.ActionName;

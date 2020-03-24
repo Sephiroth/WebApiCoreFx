@@ -5,7 +5,7 @@ namespace WebApiCoreFx.Filter
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
-        private static ILog logger = LogManager.GetLogger(Startup.repository.Name, typeof(Startup));
+        private static ILog logger = LogManager.GetLogger(Startup.LogRep.Name, typeof(Startup));
 
         public void OnException(ExceptionContext context)
         {

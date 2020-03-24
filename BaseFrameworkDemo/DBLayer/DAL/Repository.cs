@@ -57,7 +57,7 @@ namespace DBLayer.DAL
                 int count = await rs.CountAsync();
                 if (count > 0)
                 {
-                    obj = await rs.Take(firstRow).Skip(pageSize).ToListAsync();
+                    obj = await rs.Skip(firstRow).Take(pageSize).ToListAsync();
                 }
                 sum = count;
             }
@@ -78,20 +78,18 @@ namespace DBLayer.DAL
             return rs;
         }
 
-        public async Task<int> ExecuteSqlAsync([NotNull]string sql, params object[] parameters)
+        public async Task<int> ExecuteSqlAsync([NotNull]FormattableString sql, params object[] parameters)
         {
-            using (var db = new db_cdzContext())
-            {
-                return await db.Database.ExecuteSqlCommandAsync(sql, parameters);
-            }
+            using var db = new db_cdzContext();
+            return await db.Database.ExecuteSqlInterpolatedAsync(sql);
+            //return await db.Database.ExecuteSqlRawAsync(sql, parameters);
+            //return await db.Database.ExecuteSqlCommandAsync(sql, parameters);
         }
 
         public async Task<List<T>> QueryAsync([NotNull]string sql, params object[] parameters)
         {
-            using (var db = new db_cdzContext())
-            {
-                return await db.Set<T>().FromSql(sql, parameters).ToListAsync();
-            }
+            using var db = new db_cdzContext();
+            return await db.Set<T>().FromSqlRaw(sql, parameters).ToListAsync();
         }
 
     }

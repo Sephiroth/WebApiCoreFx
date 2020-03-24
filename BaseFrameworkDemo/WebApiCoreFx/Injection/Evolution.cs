@@ -16,7 +16,7 @@ namespace WebApiCoreFx.Injection
             // 注册程序集
             Assembly Service = Assembly.Load("LogicLayer");
             Assembly IService = Assembly.Load("ILogicLayer");
-            builder.RegisterAssemblyTypes(IService, Service).AsImplementedInterfaces().Where(t => t.Name.EndsWith("Service"));
+            builder.RegisterAssemblyTypes(IService, Service).Where(t => t.Name.EndsWith("Service")).AsImplementedInterfaces();
         }
     }
 }
