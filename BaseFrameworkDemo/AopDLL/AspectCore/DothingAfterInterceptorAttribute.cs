@@ -9,7 +9,7 @@ namespace AopDLL
         public async override Task Invoke(AspectContext context, AspectDelegate next)
         {
             await next.Invoke(context);
-            Console.WriteLine($"______before->{context.ServiceMethod.Name}:Completed;DothingAfterExecuting");
+            //Console.WriteLine($"______before->{context.ServiceMethod.Name}:Completed;DothingAfterExecuting");
             if (context.ProxyMethod.Name.Contains("GetAsync"))
             {
                 if (context.ReturnValue is Task<System.Collections.Generic.List<DBModel.Entity.TbUser>>)

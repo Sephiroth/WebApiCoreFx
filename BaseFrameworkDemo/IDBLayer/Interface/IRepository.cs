@@ -37,7 +37,7 @@ namespace IDBLayer.Interface
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<bool> DeleteAsync([NotNull]List<T> t);
+        Task<bool> DeleteAsync([NotNull]params T[] list);
 
         /// <summary>
         /// sql执行增/删/改

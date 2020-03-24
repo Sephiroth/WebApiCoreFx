@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AspNetCoreHostingModel>OutProcess</AspNetCoreHostingModel>
     <!-- ServerGarbageCollection:服务器垃圾收集:不会让内存无限增长 -->
     <ServerGarbageCollection>false</ServerGarbageCollection>

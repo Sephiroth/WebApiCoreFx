@@ -27,13 +27,13 @@ namespace DBLayer.DAL
             return rs;
         }
 
-        public async Task<bool> DeleteAsync([NotNull]List<T> t)
+        public async Task<bool> DeleteAsync([NotNull]params T[] list)
         {
             bool rs = false;
             using (var db = new db_cdzContext())
             {
-                db.Set<T>().RemoveRange(t);
-                rs = await db.SaveChangesAsync() == t.Count;
+                db.Set<T>().RemoveRange(list);
+                rs = await db.SaveChangesAsync() == list.Length;
             }
             return rs;
         }
@@ -77,7 +77,6 @@ namespace DBLayer.DAL
             }
             return rs;
         }
-
 
         public async Task<int> ExecuteSqlAsync([NotNull]string sql, params object[] parameters)
         {
