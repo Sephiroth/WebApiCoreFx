@@ -20,12 +20,12 @@ Ocelot网关Demo
 
 ------------------------------------------
 
-### ORM_Demo
+### ORM_Demo (已迁出为独立demo)
 EFCore,Dapper,SqlSugar,LinqToDB
 
 ------------------------------------------
 
-### Serging微服务框架参考Demo
+### Serging微服务框架参考Demo (已迁出为独立demo)
 .Net Core 2.2 + Surging-1.0.0版本的微服务框架
 
 ------------------------------------------
