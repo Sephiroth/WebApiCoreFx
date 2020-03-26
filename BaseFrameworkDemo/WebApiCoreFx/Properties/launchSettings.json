@@ -20,7 +20,7 @@
     "WebApiCoreFx": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/values/get",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

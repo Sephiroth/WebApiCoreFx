@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>WebApiCoreFx</RootNamespace>
-    <AspNetCoreHostingModel>OutProcess</AspNetCoreHostingModel>
+    <AspNetCoreHostingModelV2>OutProcess</AspNetCoreHostingModelV2>
     <!-- ServerGarbageCollection:服务器垃圾收集:不会让内存无限增长 -->
     <ServerGarbageCollection>false</ServerGarbageCollection>
     <!-- ServerGarbageCollection:并发垃圾收集:不会让内存无限增长 -->

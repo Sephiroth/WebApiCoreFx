@@ -55,15 +55,16 @@ namespace WebApiCoreFx
         public void ConfigureServices(IServiceCollection services) // IServiceProvider
         {
             #region 跨域
-            //services.AddCors(options =>
-            //{
-            //    //options.AddDefaultPolicy(p => { p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials(); });
-            //    options.AddPolicy("AllowAll", p =>
-            //    {
-            //        // 允许所有的域名请求 // 允许所有的请求方式GET/POST/PUT/DELETE // 允许所有的头部参数 // 允许携带Cookie
-            //        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
-            //    });
-            //});
+            services.AddCors(options =>
+            {
+                string[] corsOrigins = Configuration.GetSection("CorsOrigins").Get<string[]>();
+                options.AddPolicy("AllowAll", p =>
+                {
+                    // 允许所有的域名请求 // 允许所有的请求方式GET/POST/PUT/DELETE // 允许所有的头部参数 // 允许携带Cookie
+                    // .AllowAnyOrigin().AllowCredentials()
+                    p.WithOrigins(corsOrigins).AllowAnyMethod().AllowAnyHeader();
+                });
+            });
             #endregion
 
             services.AddControllers(options =>
@@ -179,16 +180,6 @@ namespace WebApiCoreFx
             });
             #endregion
 
-            //services.AddMvc(options =>
-            //    {
-            //        options.Filters.Add<HttpGlobalExceptionFilter>(); // 异常过滤器
-            //        options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
-            //        options.EnableEndpointRouting = false;//default true
-            //        //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-            //    })
-            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-
             #region Autofac IOC注册程序集(.Net Core 2.2及以下,3.0以上废弃)
             //ContainerBuilder builder = new ContainerBuilder();
             //builder.Populate(services);
@@ -286,15 +277,15 @@ namespace WebApiCoreFx
 
             //添加访问静态文件
             string folder = CreateDirectory("FileFolder");
-            app.UseStaticFiles();
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(folder) //
-            //    //RequestPath = folder // 静态文件请求路径
-            //});
+            //app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(folder) //
+                //RequestPath = folder // 静态文件请求路径
+            });
 
             app.UseRouting();
-            //app.UseAuthentication();//认证
+            app.UseAuthentication();//认证
             app.UseAuthorization();
             // 放在useMvc前，否则报错
             // app.UseSession();
@@ -324,17 +315,11 @@ namespace WebApiCoreFx
             //app.MapWhen(context => context.Request.Headers.ContainsKey("branch"), HandleBranch);
             #endregion
 
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}");
-            //});
-
-            // CORS 中间件必须配置为在对 UseRouting 和 UseEndpoints的调用之间执行
             app.UseCors("AllowAll");
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers();//.RequireCors("AllowAll");
                 endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
             });
         }

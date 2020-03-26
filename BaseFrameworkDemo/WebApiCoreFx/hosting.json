@@ -1,0 +1,3 @@
+{
+  "server.urls": "http://*:9876;https://*:9877"
+}
