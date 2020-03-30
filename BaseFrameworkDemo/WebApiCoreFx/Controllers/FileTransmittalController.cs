@@ -48,18 +48,18 @@ namespace WebApiCoreFx.Controllers
                 if (!string.IsNullOrEmpty(data))
                 {
                     using FileStream fs = new FileStream(filePart, FileMode.Create);
-                    await fs.WriteAsync(Convert.FromBase64String(data));
+                    await fs.WriteAsync(System.Text.Encoding.Default.GetBytes(data)); // Convert.FromBase64String(data)
                     rs = true;
                 }
                 if (total == index)
                 {
                     returnName = await FileMerge(cachePath, fileName);
-                    Directory.Delete(cachePath);//删除文件夹
+                    DelectDir(cachePath);//删除文件夹
                 }
             }
             catch (Exception ex)
             {
-                Directory.Delete(cachePath);//删除文件夹
+                DelectDir(cachePath);//删除文件夹
                 throw ex;
             }
             if (total == index)
@@ -140,6 +140,25 @@ namespace WebApiCoreFx.Controllers
                 }
             }
             return newName;
+        }
+
+        private static void DelectDir(string srcPath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(srcPath);
+            FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();  //返回目录中所有文件和子目录
+            foreach (FileSystemInfo i in fileinfo)
+            {
+                if (i is DirectoryInfo)            //判断是否文件夹
+                {
+                    DirectoryInfo subdir = new DirectoryInfo(i.FullName);
+                    subdir.Delete(true);          //删除子目录和文件
+                }
+                else
+                {
+                    System.IO.File.Delete(i.FullName);      //删除指定文件
+                }
+            }
+            dir.Delete();
         }
 
     }
