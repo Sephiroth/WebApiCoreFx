@@ -2,6 +2,7 @@
 using CustomizeMiddleware;
 using DBLayer.DAL;
 using DBModel.Entity;
+using EFCoreDBLayer.DAL;
 using IDBLayer.Interface;
 using IdentityModel;
 using log4net;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -76,8 +78,14 @@ namespace WebApiCoreFx
             }); // .AddControllersAsServices();使用属性注入而不是构造函数注入，必须加AddControllersAsServices
 
             #region .net core ioc注册
-            //services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient(typeof(IRepository<>), typeof(DbRepository<>));
             //services.AddTransient<IUserService, UserService>();
+            // 注册单例ArrayPool<T>
+            services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
+            services.AddSingleton(s=> {
+                var provider = s.GetRequiredService<ObjectPoolProvider>();
+                return provider.Create<object>();
+            });
             #endregion
 
             #region CSRF
@@ -125,7 +133,7 @@ namespace WebApiCoreFx
             services.Configure<FormOptions>(options =>
             {
                 // 限制上传文件的大小
-                options.MultipartBodyLengthLimit = int.MaxValue;
+                //options.MultipartBodyLengthLimit = int.MaxValue;
             });
             #endregion
 
@@ -163,20 +171,20 @@ namespace WebApiCoreFx
                     Title = "My API",
                     Version = "v1",
                     Description = "A simple example ASP.NET Core Web API",
-                    TermsOfService = new Uri("https://example.com/terms"),
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Shayne Boyer",
-                        Email = string.Empty,
-                        Url = new Uri("https://twitter.com/spboyer"),
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "Use under LICX",
-                        Url = new Uri("https://example.com/license"),
-                    }
+                    //TermsOfService = new Uri("https://example.com/terms"),
+                    //Contact = new OpenApiContact
+                    //{
+                    //    Name = "Shayne Boyer",
+                    //    Email = string.Empty,
+                    //    //Url = new Uri("https://twitter.com/spboyer"),
+                    //},
+                    //License = new OpenApiLicense
+                    //{
+                    //    Name = "Use under LICX",
+                    //    //Url = new Uri("https://example.com/license"),
+                    //}
                 });
-                option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
+                //option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
             });
             #endregion
 
@@ -229,7 +237,7 @@ namespace WebApiCoreFx
             builder.RegisterAssemblyTypes(serviceImpl, iService).Where(t => t.Name.EndsWith("Service")).AsImplementedInterfaces();
             //注册仓储，所有IRepository接口到Repository的映射
             //InstancePerDependency：默认模式，每次调用，都会重新实例化对象；每次请求都创建一个新的对象；
-            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
+            //builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
             #endregion
 
             #region 基于AspectCore实现aop
@@ -254,7 +262,7 @@ namespace WebApiCoreFx
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddProvider(new Log4NetProvider("Log4net.config"));
-
+            //loggerFactory.AddLog4Net("Log4net.config");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -268,7 +276,7 @@ namespace WebApiCoreFx
             app.UseSwagger();
             app.UseSwaggerUI(o =>
             {
-                o.SwaggerEndpoint("/swagger/Version1/swagger.json", "Version1");
+                o.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             #endregion
 

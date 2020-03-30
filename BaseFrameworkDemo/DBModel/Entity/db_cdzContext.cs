@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Configuration;
 
 namespace DBModel.Entity
@@ -21,7 +22,7 @@ namespace DBModel.Entity
             : base(options)
         {
         }
-        
+
         public virtual DbSet<TbUser> TbUser { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -31,7 +32,15 @@ namespace DBModel.Entity
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseMySql(DbConnStr);
             }
+            //optionsBuilder.UseLoggerFactory(MyLoggerFactory);
         }
+
+        //public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
+        //{
+        //    builder
+        //        .AddFilter((category, level) => category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
+        //        .AddConsole();
+        //});
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

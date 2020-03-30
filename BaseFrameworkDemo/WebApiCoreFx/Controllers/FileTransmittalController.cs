@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Net.Http.Headers;
 
 namespace WebApiCoreFx.Controllers
 {
@@ -30,42 +26,46 @@ namespace WebApiCoreFx.Controllers
         /// 上传大文件
         /// </summary>
         /// <returns></returns>
-        //[HttpPost("UploadAsync")]
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> UploadAsync()
         {
-            var data = Request.Form.Files["data"];
-            string lastModified = Request.Form["lastModified"].ToString();
-            var total = Request.Form["total"];
-            var fileName = Request.Form["fileName"];
-            var index = Request.Form["index"];
-            string temporary = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", lastModified);//临时保存分块的目录
-
+            string data = Request.Form["data"].ToString();
+            string total = Request.Form["total"];
+            string fileName = Request.Form["fileName"];
+            string index = Request.Form["index"];
+            string cacheDirectory = fileName.Split(".")[0];
+            string fileFolder = $"{Directory.GetCurrentDirectory()}/wwwroot/";
+            string cachePath = Path.Combine(fileFolder, cacheDirectory);//临时保存分块的目录
+            bool rs = false;
+            string returnName = string.Empty;
             try
             {
-                if (!Directory.Exists(temporary))
-                    Directory.CreateDirectory(temporary);
-                string filePath = Path.Combine(temporary, index.ToString());
-                if (!Convert.IsDBNull(data))
+                if (!Directory.Exists(cachePath))
                 {
-                    await Task.Run(() =>
-                    {
-                        FileStream fs = new FileStream(filePath, FileMode.Create);
-                        data.CopyTo(fs);
-                    });
+                    Directory.CreateDirectory(cachePath);
                 }
-                bool mergeOk = false;
+                string filePart = Path.Combine(cachePath, index);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    using FileStream fs = new FileStream(filePart, FileMode.Create);
+                    await fs.WriteAsync(Convert.FromBase64String(data));
+                    rs = true;
+                }
                 if (total == index)
                 {
-                    mergeOk = await FileMerge(lastModified, fileName);
+                    returnName = await FileMerge(cachePath, fileName);
+                    Directory.Delete(cachePath);//删除文件夹
                 }
             }
             catch (Exception ex)
             {
-                Directory.Delete(temporary);//删除文件夹
+                Directory.Delete(cachePath);//删除文件夹
                 throw ex;
             }
-            return Ok(true);
+            if (total == index)
+                return Ok(returnName);
+            else
+                return Ok(rs);
         }
 
         /// <summary>
@@ -117,28 +117,29 @@ namespace WebApiCoreFx.Controllers
             return Ok("下载完成");
         }
 
-
-        public async Task<bool> FileMerge(string lastModified, string fileName)
+        private async Task<string> FileMerge(string cachePath, string fileName)
         {
-            string temporary = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", lastModified);//临时文件夹
-            string fileExt = Path.GetExtension(fileName);//获取文件后缀
-            string[] files = Directory.GetFiles(temporary);//获得下面的所有文件
+            string newName = $"{DateTime.Now.ToString("yyyyMMddHHmmssfff")}{fileName}";//获取文件后缀
+            DirectoryInfo info = new DirectoryInfo(cachePath);
+            FileInfo[] files = info.GetFiles();//获得下面的所有文件
             if (files == null || files.Length < 1)
-                return false;
-
-            string finalPath = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", $"{DateTime.Now.ToString("yyMMddHHmmss")}{fileExt}");
-            using (var fs = new FileStream(finalPath, FileMode.Create))
             {
-                foreach (var part in files.OrderBy(x => x.Length).ThenBy(x => x))//排一下序，保证从0-N Write
+                return string.Empty;
+            }
+
+            string finalPath = Path.Combine($"{Directory.GetCurrentDirectory()}/wwwroot/", newName);
+            using (FileStream fs = new FileStream(finalPath, FileMode.Create))
+            {
+                int offset = 0;
+                foreach (FileInfo part in files.OrderBy(x => x.Name).ThenBy(x => x))//排一下序，保证从0-N Write
                 {
-                    byte[] bytes = System.IO.File.ReadAllBytes(part);
-                    await fs.WriteAsync(bytes, 0, bytes.Length);
+                    byte[] bytes = System.IO.File.ReadAllBytes(part.FullName);
+                    await fs.WriteAsync(bytes, offset, bytes.Length);
+                    offset += bytes.Length;
                     bytes = null;
-                    System.IO.File.Delete(part);//删除分块
                 }
             }
-            Directory.Delete(temporary);//删除文件夹
-            return true;
+            return newName;
         }
 
     }

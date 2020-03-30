@@ -12,6 +12,10 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>WebApiCoreFx.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Log\**" />
     <Content Remove="Log\**" />
@@ -39,6 +43,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomizeMiddleware\CustomizeMiddleware.csproj" />
     <ProjectReference Include="..\DBLayer\DBLayer.csproj" />
+    <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.csproj" />
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
     <ProjectReference Include="..\ILogicLayer\ILogicLayer.csproj" />
     <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
@@ -59,6 +64,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="config.ncconf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WebApiCoreFx.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

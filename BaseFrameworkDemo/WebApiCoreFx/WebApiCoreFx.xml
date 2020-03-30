@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebApiCoreFx</name>
+    </assembly>
+    <members>
+        <member name="T:WebApiCoreFx.Controllers.FileTransmittalController">
+            <summary>
+            文件传输接口
+            </summary>
+        </member>
+        <member name="F:WebApiCoreFx.Controllers.FileTransmittalController.BUFF_SIZE">
+            <summary>
+            buffer大小:100k
+            </summary>
+        </member>
+        <member name="M:WebApiCoreFx.Controllers.FileTransmittalController.UploadAsync">
+            <summary>
+            上传大文件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebApiCoreFx.Controllers.FileTransmittalController.DownloadFileAsync(System.String,System.String)">
+            <summary>
+            下载大文件
+            </summary>
+            <param name="filename"></param>
+            <param name="respType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApiCoreFx.Controllers.TestController.Get(System.String)">
+            <summary>
+            查询用户
+            </summary>
+            <param name="nickName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApiCoreFx.Controllers.ValuesController.Post(System.String)">
+            <summary>
+            ValidateAntiForgeryToken特性(Request.Header包含X-XSRF-TOKEN才能正常请求)
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApiCoreFx.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            (.net core2.2及以下,通过Autofac 实现Ioc,返回IServiceProvider)
+            </summary>
+            <param name="services"></param>
+            <returns>IServiceProvider</returns>
+        </member>
+        <member name="M:WebApiCoreFx.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+            <summary>
+            .Net Core 3.0及以上,通过Autofac ioc注册程序集
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="M:WebApiCoreFx.Startup.CreateDirectory(System.String)">
+            <summary>
+            创建文件夹
+            </summary>
+            <param name="directory"></param>
+        </member>
+    </members>
+</doc>

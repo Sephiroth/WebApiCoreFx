@@ -38,7 +38,7 @@ namespace DBLayer.DAL
             return rs;
         }
 
-        public async Task<T> GetEntityAsync([NotNull]Expression<Func<T, bool>> predicate)
+        public async Task<T> GetEntityAsync(Expression<Func<T, bool>> predicate)
         {
             T obj = null;
             using (var db = new db_cdzContext())
@@ -48,7 +48,7 @@ namespace DBLayer.DAL
             return obj;
         }
 
-        public async Task<List<T>> GetListAsync([NotNull]Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum)
+        public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum)
         {
             List<T> obj = null;
             using (var db = new db_cdzContext())

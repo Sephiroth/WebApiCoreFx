@@ -20,7 +20,7 @@ namespace IDBLayer.Interface
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<T> GetEntityAsync([NotNull]Expression<Func<T, bool>> predicate);
+        Task<T> GetEntityAsync(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// 获取多个实例(异步)
@@ -30,7 +30,7 @@ namespace IDBLayer.Interface
         /// <param name="pageSize"></param>
         /// <param name="sum">异步不支持ref,in,out</param>
         /// <returns></returns>
-        Task<List<T>> GetListAsync([NotNull]Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum);
+        Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum);
 
         /// <summary>
         /// 批量删除(异步)
