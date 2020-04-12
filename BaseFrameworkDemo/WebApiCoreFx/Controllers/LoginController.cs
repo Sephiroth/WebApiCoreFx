@@ -28,12 +28,12 @@ namespace WebApiCoreFx.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync(string name, string pwd)
+        public async Task<IActionResult> LoginAsync(LoginModel model)
         {
-            TbUser user = await rep.GetEntityAsync(s => s.Name.Equals(name));
+            TbUser user = await rep.GetEntityAsync(s => s.Name.Equals(model.name));
             if (user == null)
-                return NotFound($"用户名'{name}'不存在");
-            if (!WxAppEncryptUtil.MD5(pwd).Equals(user.Pwd))
+                return NotFound($"用户名'{model.name}'不存在");
+            if (!WxAppEncryptUtil.MD5(model.pwd).Equals(user.Pwd))
                 return ValidationProblem(new ValidationProblemDetails() { Detail = "密码错误" });
 
             string token = AuthorizationUtil.GetToken(30, user.Id, user.Name, "user", user.CarNum);
@@ -71,5 +71,12 @@ namespace WebApiCoreFx.Controllers
             return user;
         }
 
+    }
+
+    public class LoginModel
+    {
+        public string name;
+        public string pwd;
+        public string roleID;
     }
 }
