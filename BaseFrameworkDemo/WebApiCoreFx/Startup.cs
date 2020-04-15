@@ -1,6 +1,4 @@
-﻿using Autofac;
-using CustomizeMiddleware;
-using DBLayer.DAL;
+﻿using CustomizeMiddleware;
 using DBModel.Entity;
 using EFCoreDBLayer.DAL;
 using IDBLayer.Interface;
@@ -19,12 +17,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ObjectPool;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MySql.Data.EntityFrameworkCore.Extensions;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
@@ -79,13 +76,14 @@ namespace WebApiCoreFx
 
             #region .net core ioc注册
             services.AddTransient(typeof(IRepository<>), typeof(DbRepository<>));
-            //services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ILogicLayer.Interface.IUserService, LogicLayer.Service.UserService>();
             // 注册单例ArrayPool<T>
-            services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
-            services.AddSingleton(s=> {
-                var provider = s.GetRequiredService<ObjectPoolProvider>();
-                return provider.Create<object>();
-            });
+            //services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
+            //services.AddSingleton(s =>
+            //{
+            //    var provider = s.GetRequiredService<ObjectPoolProvider>();
+            //    return provider.Create<object>();
+            //});
             #endregion
 
             #region CSRF
@@ -148,8 +146,13 @@ namespace WebApiCoreFx
             #endregion
 
             #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)
-            services.AddDbContextPool<db_cdzContext>(dbCtxBuilder =>
+            /* Pomelo.EntityFrameworkCore.MySql和MySql.Data.EntityFrameworkCore两个包
+             * 和 db_cdzContext的OnConfiguring方法optionsBuilder.UseMySQL保持同步
+             */
+            services.AddEntityFrameworkMySql();
+            services.AddDbContextPool<db_cdzContext>((dbCtxBuilder) =>
             {
+                // 与AddEntityFrameworkMySQL保持同步
                 dbCtxBuilder.UseMySql(Configuration.GetConnectionString("MysqlConnection"));
                 dbCtxBuilder.UseLoggerFactory(loggerFactory);
             }, 8);
@@ -161,7 +164,7 @@ namespace WebApiCoreFx
             #endregion
 
             services.AddHttpClient();
-            services.AddSession();
+            //services.AddSession();
 
             #region swagger文档
             services.AddSwaggerGen(option =>
@@ -216,53 +219,14 @@ namespace WebApiCoreFx
         }
 
         /// <summary>
-        /// .Net Core 3.0及以上,通过Autofac ioc注册程序集
+        /// 
         /// </summary>
-        /// <param name="builder"></param>
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            #region 获取所有控制器类型并使用属性注入
-            //var controllerBaseType = typeof(ControllerBase);
-            //builder.RegisterAssemblyTypes(typeof(Program).Assembly)
-            //    .Where(t => controllerBaseType.IsAssignableFrom(t) && t != controllerBaseType)
-            //    .PropertiesAutowired();
-            #endregion
-
-            #region 
-            //业务逻辑实现
-            Assembly serviceImpl = Assembly.Load("LogicLayer");
-            //业务逻辑接口
-            Assembly iService = Assembly.Load("ILogicLayer");
-            //自动注入
-            builder.RegisterAssemblyTypes(serviceImpl, iService).Where(t => t.Name.EndsWith("Service")).AsImplementedInterfaces();
-            //注册仓储，所有IRepository接口到Repository的映射
-            //InstancePerDependency：默认模式，每次调用，都会重新实例化对象；每次请求都创建一个新的对象；
-            //builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
-            #endregion
-
-            #region 基于AspectCore实现aop
-            //builder.RegisterDynamicProxy(null, config =>
-            //{
-            //    // namespace1命名空间下的Service不会被代理
-            //    //config.NonAspectPredicates.Add(Predicates.ForNameSpace("namespace1"));//"*.namespace1"
-            //    // *Service结尾的Service不会被代理
-            //    //config.NonAspectPredicates.Add(Predicates.ForService("*Service"));
-            //    // *method结尾的Service不会被代理
-            //    //config.NonAspectPredicates.Add(Predicates.ForMethod("*method"));
-            //    config.Interceptors.AddTyped<DothingAfterInterceptorAttribute>(Predicates.ForService("*Service"));
-            //    config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForService("*Service"));
-            //    config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForMethod("Get*"));
-            //    //config.Interceptors.AddTyped<DothingBeforeInterceptorAttribute>(Predicates.ForNameSpace("WebApiCoreFx.Controllers"));
-            //    config.ThrowAspectException = true;
-            //});
-            #endregion
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddProvider(new Log4NetProvider("Log4net.config"));
-            //loggerFactory.AddLog4Net("Log4net.config");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -285,7 +249,6 @@ namespace WebApiCoreFx
 
             //添加访问静态文件
             string folder = CreateDirectory("FileFolder");
-            //app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(folder) //

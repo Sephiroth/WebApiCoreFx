@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomizeMiddleware", "Base
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WxAppUtil", "BaseFrameworkDemo\WxAppUtil\WxAppUtil.csproj", "{E84CAEAD-1A0F-410C-A967-2C04914CA22D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCoreDBLayer", "BaseFrameworkDemo\EFCoreDBLayer\EFCoreDBLayer.csproj", "{14B4EAD7-7574-453E-8124-B8E2AD42BB32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCoreDBLayer", "BaseFrameworkDemo\EFCoreDBLayer\EFCoreDBLayer.csproj", "{14B4EAD7-7574-453E-8124-B8E2AD42BB32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskLib", "BaseFrameworkDemo\TaskLib\TaskLib.csproj", "{266D8AD2-0B8D-4AFC-9DCC-AB2D5988655A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{14B4EAD7-7574-453E-8124-B8E2AD42BB32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14B4EAD7-7574-453E-8124-B8E2AD42BB32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14B4EAD7-7574-453E-8124-B8E2AD42BB32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{266D8AD2-0B8D-4AFC-9DCC-AB2D5988655A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{266D8AD2-0B8D-4AFC-9DCC-AB2D5988655A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{266D8AD2-0B8D-4AFC-9DCC-AB2D5988655A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{266D8AD2-0B8D-4AFC-9DCC-AB2D5988655A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +106,7 @@ Global
 		{07477902-5389-4C92-AA57-4B8767DF8FDD} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
 		{E84CAEAD-1A0F-410C-A967-2C04914CA22D} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
 		{14B4EAD7-7574-453E-8124-B8E2AD42BB32} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
+		{266D8AD2-0B8D-4AFC-9DCC-AB2D5988655A} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E10A223F-DB86-4F9A-9FCE-B15A7A855840}

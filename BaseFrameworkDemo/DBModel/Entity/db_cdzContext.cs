@@ -14,10 +14,6 @@ namespace DBModel.Entity
         {
         }
 
-        public db_cdzContext()
-        {
-        }
-
         public db_cdzContext(DbContextOptions<db_cdzContext> options)
             : base(options)
         {
@@ -30,7 +26,7 @@ namespace DBModel.Entity
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql(DbConnStr);
+                optionsBuilder.UseMySql(DbConnStr);//x => x.ServerVersion("8.0.11-mysql")
             }
             //optionsBuilder.UseLoggerFactory(MyLoggerFactory);
         }

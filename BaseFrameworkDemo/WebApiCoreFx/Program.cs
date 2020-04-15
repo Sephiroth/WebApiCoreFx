@@ -24,7 +24,7 @@ namespace WebApiCoreFx
                 .Build();
 
             IHostBuilder host = Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel()

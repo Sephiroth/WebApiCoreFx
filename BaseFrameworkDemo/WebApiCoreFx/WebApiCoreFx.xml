@@ -50,11 +50,13 @@
             <param name="services"></param>
             <returns>IServiceProvider</returns>
         </member>
-        <member name="M:WebApiCoreFx.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+        <member name="M:WebApiCoreFx.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
-            .Net Core 3.0及以上,通过Autofac ioc注册程序集
+            
             </summary>
-            <param name="builder"></param>
+            <param name="app"></param>
+            <param name="env"></param>
+            <param name="loggerFactory"></param>
         </member>
         <member name="M:WebApiCoreFx.Startup.CreateDirectory(System.String)">
             <summary>

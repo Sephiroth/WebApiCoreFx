@@ -10,10 +10,14 @@
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <StartupObject></StartupObject>
     <OutputType>Exe</OutputType>
+    <UserSecretsId>05b77863-43b0-4d97-8be5-bb510d550bf5</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>WebApiCoreFx.xml</DocumentationFile>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,15 +38,14 @@
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <!--<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />-->
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
-    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="6.10.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CustomizeMiddleware\CustomizeMiddleware.csproj" />
-    <ProjectReference Include="..\DBLayer\DBLayer.csproj" />
     <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.csproj" />
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
     <ProjectReference Include="..\ILogicLayer\ILogicLayer.csproj" />
@@ -65,6 +68,9 @@
     </None>
     <None Update="config.ncconf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="WebApiCoreFx.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
