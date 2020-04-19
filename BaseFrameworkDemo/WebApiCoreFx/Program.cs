@@ -20,15 +20,16 @@ namespace WebApiCoreFx
 
             IConfigurationRoot config = new ConfigurationBuilder()
                 .SetBasePath(currentDirector)
-                .AddJsonFile("hosting.json", true)
+                .AddJsonFile("appsettings.json", true)
                 .Build();
 
+            string[] urls = config.GetSection("StartUpUrls").Get<string[]>();
             IHostBuilder host = Host.CreateDefaultBuilder(args)
                 //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel()
-                    .UseConfiguration(config)
+                    .UseUrls(urls)
                     .UseContentRoot(currentDirector)
                     .ConfigureKestrel(serverOptions =>
                     {
