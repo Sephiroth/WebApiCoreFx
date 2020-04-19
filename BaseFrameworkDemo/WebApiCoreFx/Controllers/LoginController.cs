@@ -54,21 +54,31 @@ namespace WebApiCoreFx.Controllers
         }
 
         [HttpPost]
-        public async Task<TbUser> WxLoginAsync(WxLoginParam loginParam)
+        public async Task<IActionResult> WxLoginAsync(WxLoginParam loginParam)
         {
-            TbUser user = null;
-            string phone = null;
             // 使用IHttpClientFactory创建的HttpClient
             OpenIdParam openIdParam = await WxUtils.GetOpenIdAsync(loginParam, clientFactory.CreateClient());
-            if (openIdParam != null && !string.IsNullOrEmpty(openIdParam.session_key))
+            if (openIdParam == null || string.IsNullOrEmpty(openIdParam.session_key))
             {
-                WxPhoneModel wxPhoneModel = WxAppEncryptUtil.GetEncryptedDataStr(loginParam.EncryptedData, openIdParam.session_key, loginParam.Iv);
-                if (wxPhoneModel != null)
-                {
-                    phone = wxPhoneModel.PurePhoneNumber ?? wxPhoneModel.PhoneNumber;
-                }
+                return ValidationProblem("验证错误,Secret可能失效");
             }
-            return user;
+            WxPhoneModel wxPhoneModel = WxAppEncryptUtil.GetEncryptedDataStr(loginParam.EncryptedData, openIdParam.session_key, loginParam.Iv);
+            if (wxPhoneModel == null)
+            {
+                return ValidationProblem("用户信息解析错误");
+            }
+            string phone = wxPhoneModel.PurePhoneNumber ?? wxPhoneModel.PhoneNumber;
+            if (string.IsNullOrEmpty(phone))
+            {
+                return ValidationProblem("可能未绑定手机号");
+            }
+            TbUser user = await rep.GetEntityAsync(s => s.Phone.Equals(phone));
+            if (user == null)
+            {
+                return ValidationProblem("用户未注册");
+            }
+            string token = AuthorizationUtil.GetToken(30, user.Id, user.Name, "user", user.CarNum);
+            return Ok(new { access_token = token });
         }
 
     }

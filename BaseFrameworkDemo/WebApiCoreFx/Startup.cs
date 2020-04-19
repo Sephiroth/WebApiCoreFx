@@ -143,6 +143,10 @@ namespace WebApiCoreFx
                 //Redis实例名RedisDistributedCache
                 options.InstanceName = "RedisDistributedCache";
             });
+            services.AddMemoryCache(options =>
+            {
+                options.SizeLimit = short.MaxValue;
+            });
             #endregion
 
             #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)
