@@ -139,9 +139,9 @@ namespace WebApiCoreFx
             services.AddDistributedRedisCache(options =>
             {
                 //用于连接Redis的配置  Configuration.GetConnectionString("RedisConnectionString")读取配置信息的串
-                options.Configuration = Configuration["Redis:ConnectionString"];
-                //Redis实例名RedisDistributedCache
-                options.InstanceName = "RedisDistributedCache";
+                options.Configuration = Configuration.GetConnectionString("RedisConnection");//Configuration["Redis:ConnectionString"];
+                //Redis实例名RedisCache
+                options.InstanceName = "RedisCache";
             });
             services.AddMemoryCache(options =>
             {

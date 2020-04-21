@@ -12,7 +12,7 @@ namespace EFCoreDBLayer.DAL
 {
     public class DbRepository<T> : IRepository<T> where T : class, new()
     {
-        private db_cdzContext context;
+        private readonly db_cdzContext context;
 
         public DbRepository(db_cdzContext context)
         {
@@ -46,7 +46,11 @@ namespace EFCoreDBLayer.DAL
         public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum)
         {
             List<T> list = null;
-            var rs = context.Set<T>().Where(predicate);
+            IQueryable<T> rs = context.Set<T>().AsQueryable();
+            if (predicate != null)
+            {
+                rs = rs.Where(predicate);
+            }
             int count = await rs.CountAsync();
             if (count > 0)
             {

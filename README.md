@@ -13,8 +13,9 @@ WebApiCoreFx:（dotnet core3.1 + EFCore + Autofac + AspectCore + Log4net + Mem�
 3.基于ActionFilterAttribute的A自定义特性AOP;<br>
 4.增加WxAppUtil模块,整合微信小程序快捷登录功能<br>
 (Demo:接口WebApiCoreFx工程:/api/Login/WxLogin)<br>
-5.增加MemoryCache缓存<br>
-(Demo:接口WebApiCoreFx工程:/api/Test/Get)<br>
+5.增加MemoryCache,Redis缓存<br>
+(Demo:接口WebApiCoreFx工程:/api/Test/Get):MemoryCache<br>
+(Demo:接口WebApiCoreFx工程:/api/Test/GetAll):Redis<br>
 
 ------------------------------------------
 

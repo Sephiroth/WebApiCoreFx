@@ -1,18 +1,16 @@
 ﻿using AopDLL;
 using DBModel.Entity;
 using IDBLayer.Interface;
+using ILogicLayer.DTO;
 using ILogicLayer.Interface;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace LogicLayer.Service
 {
     public class UserService : IUserService
     {
-        private IRepository<TbUser> rep;
+        private readonly IRepository<TbUser> rep;
 
         public UserService(IRepository<TbUser> repo)
         {
@@ -22,6 +20,13 @@ namespace LogicLayer.Service
         public async Task<bool> AddAsync(List<TbUser> list)
         {
             return await rep.AddListAsync(list.ToArray());
+        }
+
+        public async Task<ResultDTO<TbUser>> GetAll(int pageIndex, int pageSize)
+        {
+            object sum = null;
+            List<TbUser> list = await rep.GetListAsync(null, pageIndex, pageSize, sum);
+            return new ResultDTO<TbUser>(list, sum, pageIndex, pageSize);
         }
 
         [DothingAfterInterceptor]
@@ -35,5 +40,6 @@ namespace LogicLayer.Service
         {
             return await rep.ModifyAsync(user);
         }
+
     }
 }

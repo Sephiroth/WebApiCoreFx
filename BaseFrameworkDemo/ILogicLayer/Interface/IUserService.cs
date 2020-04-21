@@ -1,5 +1,6 @@
 ﻿using AopDLL;
 using DBModel.Entity;
+using ILogicLayer.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,5 +14,7 @@ namespace ILogicLayer.Interface
         Task<List<TbUser>> GetAsync(string nickName);
 
         Task<bool> UpdateAsync(TbUser user);
+
+        Task<ResultDTO<TbUser>> GetAll(int pageIndex, int pageSize);
     }
 }

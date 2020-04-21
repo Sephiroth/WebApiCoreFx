@@ -1,17 +1,18 @@
 ﻿using DBModel.Entity;
+using ILogicLayer.DTO;
 using ILogicLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class TestController : ControllerBase
@@ -38,11 +39,11 @@ namespace WebApiCoreFx.Controllers
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)
         {
             string key = $"{Request.Path}_{nickName}";
-            List<TbUser> list = memCache.Get<List<TbUser>>(key);
-            if (list == null || list.Count < 1)
+            bool getRs = memCache.TryGetValue(key, out List<TbUser> list);
+            if (!getRs)
             {
                 list = await userServ.GetAsync(nickName);
-                memCache.Set(key, list);
+                memCache.Set(key, list, TimeSpan.FromMinutes(30));
             }
             return list;
         }
@@ -52,5 +53,27 @@ namespace WebApiCoreFx.Controllers
         {
             return await userServ.AddAsync(list);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ResultDTO<TbUser>> GetAll(int pageIndex = 1, int pageSize = 10)
+        {
+            string key = $"{Request.Path}_{pageIndex}_{pageSize}";
+            byte[] rs = await cache.GetAsync(key);
+            ResultDTO<TbUser> rsdo = null;
+            if (rs == null)
+            {
+                rsdo = await userServ.GetAll(pageIndex, pageSize);
+                await cache.SetAsync(key,
+                    System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(rsdo),
+                    new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
+            }
+            else
+            {
+                rsdo = System.Text.Json.JsonSerializer.Deserialize<ResultDTO<TbUser>>(rs);
+            }
+            return rsdo;
+        }
+
     }
 }

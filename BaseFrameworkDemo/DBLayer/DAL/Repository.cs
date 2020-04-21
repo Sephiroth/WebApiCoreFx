@@ -52,8 +52,11 @@ namespace DBLayer.DAL
         public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum)
         {
             List<T> obj = null;
-            //using var db = new db_cdzContext();
-            var rs = db.Set<T>().Where(predicate);
+            IQueryable<T> rs = db.Set<T>().AsQueryable();
+            if (predicate != null)
+            {
+                rs = rs.Where(predicate);
+            }
             int count = await rs.CountAsync();
             if (count > 0)
             {
