@@ -19,7 +19,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MySql.Data.EntityFrameworkCore.Extensions;
 using System;
 using System.IO;
 using System.Text;
@@ -31,8 +30,9 @@ namespace WebApiCoreFx
     public class Startup
     {
         private readonly SymmetricSecurityKey symmetricKey;
-        public static readonly LoggerFactory loggerFactory = new LoggerFactory();
         public static ILoggerRepository LogRep { get; set; }
+        public static ILoggerFactory DbLoggerFactory { get; private set; }
+        public static ILoggerProvider LoggerProvider { get; private set; }
 
         public Startup(IConfiguration configuration)
         {
@@ -40,7 +40,17 @@ namespace WebApiCoreFx
             db_cdzContext.DbConnStr = Configuration.GetConnectionString("MysqlConnection");
             LogRep = LogManager.CreateRepository("NETCoreRepository");
             XmlConfigurator.Configure(LogRep, new FileInfo("Log4net.config"));
+            LoggerProvider = new Log4NetProvider("Log4net.config");
             symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").GetValue<string>("SymmetricKey")));
+
+            DbLoggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddFilter((category, level) =>
+                 {
+                     return category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information;
+                 }).AddLog4Net(new Log4NetProviderOptions("Log4net.config")).AddConsole();
+            });
+
         }
 
         public IConfiguration Configuration { get; }
@@ -143,10 +153,7 @@ namespace WebApiCoreFx
                 //Redis实例名RedisCache
                 options.InstanceName = "RedisCache";
             });
-            services.AddMemoryCache(options =>
-            {
-                options.SizeLimit = short.MaxValue;
-            });
+            services.AddMemoryCache();
             #endregion
 
             #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)
@@ -157,8 +164,9 @@ namespace WebApiCoreFx
             services.AddDbContextPool<db_cdzContext>((dbCtxBuilder) =>
             {
                 // 与AddEntityFrameworkMySQL保持同步
-                dbCtxBuilder.UseMySql(Configuration.GetConnectionString("MysqlConnection"));
-                dbCtxBuilder.UseLoggerFactory(loggerFactory);
+                dbCtxBuilder.UseMySql(Configuration.GetConnectionString("MysqlConnection"))
+                    .UseLoggerFactory(DbLoggerFactory)
+                    .EnableSensitiveDataLogging();
             }, 8);
             #endregion
 
@@ -230,7 +238,7 @@ namespace WebApiCoreFx
         /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddProvider(new Log4NetProvider("Log4net.config"));
+            loggerFactory.AddProvider(LoggerProvider);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
