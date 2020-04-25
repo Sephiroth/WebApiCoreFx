@@ -36,6 +36,12 @@ namespace WebApiCoreFx
                         serverOptions.AllowSynchronousIO = true;/*启用同步IO*/
                     })
                     //.UseIISIntegration()
+                    .ConfigureAppConfiguration((hostingContext, builder) =>
+                    {
+                        builder.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
+                        .AddJsonFile("Consul.json")
+                        .AddJsonFile("appsettings.json");
+                    })
                     .UseStartup<Startup>()
                     .ConfigureLogging((hostingContext, builder) =>
                     {
@@ -46,8 +52,8 @@ namespace WebApiCoreFx
                         builder.AddDebug();
                     });
                 });
-
             return host;
         }
+
     }
 }

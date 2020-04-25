@@ -40,7 +40,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <!--<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />-->
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 
@@ -50,6 +50,7 @@
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
     <ProjectReference Include="..\ILogicLayer\ILogicLayer.csproj" />
     <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
+    <ProjectReference Include="..\Ocelot.ConsulExtensions\Ocelot.ConsulExtensions.csproj" />
     <ProjectReference Include="..\WxAppUtil\WxAppUtil.csproj" />
   </ItemGroup>
 

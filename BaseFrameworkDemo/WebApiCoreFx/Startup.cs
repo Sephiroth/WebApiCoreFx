@@ -19,11 +19,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Ocelot.ConsulExtensions;
+using Ocelot.ConsulExtensions.Model;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
+using IApplicationLifetime = Microsoft.Extensions.Hosting.IApplicationLifetime;
 
 namespace WebApiCoreFx
 {
@@ -75,7 +78,7 @@ namespace WebApiCoreFx
                 });
             });
             #endregion
-
+            services.AddOcelotConsul();
             services.AddControllers(options =>
             {
                 options.Filters.Add<HttpGlobalExceptionFilter>();
@@ -236,7 +239,9 @@ namespace WebApiCoreFx
         /// <param name="app"></param>
         /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app,
+            IWebHostEnvironment env,
+            ILoggerFactory loggerFactory)
         {
             loggerFactory.AddProvider(LoggerProvider);
             if (env.IsDevelopment())
@@ -305,6 +310,16 @@ namespace WebApiCoreFx
                 endpoints.MapControllers();//.RequireCors("AllowAll");
                 endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
             });
+            ConsulEntity consulEntity = new ConsulEntity
+            {
+                HealthAPI = Configuration["HealthAPI"],
+                ServiceIP = Configuration["Service:IP"],
+                ServicePort = Convert.ToInt32(Configuration["Service:Port"]),
+                ServiceName = Configuration["Service:Name"],
+                ConsulIP = Configuration["Consul:IP"],
+                ConsulPort = Convert.ToInt32(Configuration["Consul:Port"])
+            };
+            app.RegisterConsul(consulEntity);
         }
 
         /// <summary>
