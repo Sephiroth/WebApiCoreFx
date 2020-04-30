@@ -19,15 +19,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Ocelot.ConsulExtensions;
-using Ocelot.ConsulExtensions.Model;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
-using IApplicationLifetime = Microsoft.Extensions.Hosting.IApplicationLifetime;
-
+using WebApiCoreFx.Ioc;
 namespace WebApiCoreFx
 {
     public class Startup
@@ -53,7 +50,6 @@ namespace WebApiCoreFx
                      return category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information;
                  }).AddLog4Net(new Log4NetProviderOptions("Log4net.config")).AddConsole();
             });
-
         }
 
         public IConfiguration Configuration { get; }
@@ -78,7 +74,7 @@ namespace WebApiCoreFx
                 });
             });
             #endregion
-            services.AddOcelotConsul();
+            //services.AddOcelotConsul();
             services.AddControllers(options =>
             {
                 options.Filters.Add<HttpGlobalExceptionFilter>();
@@ -89,7 +85,12 @@ namespace WebApiCoreFx
 
             #region .net core ioc注册
             services.AddTransient(typeof(IRepository<>), typeof(DbRepository<>));
-            services.AddTransient<ILogicLayer.Interface.IUserService, LogicLayer.Service.UserService>();
+            string[][] assemblys = Configuration.GetSection("IocAssembly").Get<string[][]>();
+            foreach (string[] ambs in assemblys)
+            {
+                services.IocAssembly(ambs);
+            }
+
             // 注册单例ArrayPool<T>
             //services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
             //services.AddSingleton(s =>
@@ -310,16 +311,8 @@ namespace WebApiCoreFx
                 endpoints.MapControllers();//.RequireCors("AllowAll");
                 endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
             });
-            ConsulEntity consulEntity = new ConsulEntity
-            {
-                HealthAPI = Configuration["HealthAPI"],
-                ServiceIP = Configuration["Service:IP"],
-                ServicePort = Convert.ToInt32(Configuration["Service:Port"]),
-                ServiceName = Configuration["Service:Name"],
-                ConsulIP = Configuration["Consul:IP"],
-                ConsulPort = Convert.ToInt32(Configuration["Consul:Port"])
-            };
-            app.RegisterConsul(consulEntity);
+
+            //app.RegisterConsul(Configuration);
         }
 
         /// <summary>

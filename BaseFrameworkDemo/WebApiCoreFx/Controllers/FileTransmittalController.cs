@@ -119,7 +119,7 @@ namespace WebApiCoreFx.Controllers
 
         private async Task<string> FileMerge(string cachePath, string fileName)
         {
-            string newName = $"{DateTime.Now.ToString("yyyyMMddHHmmssfff")}{fileName}";//获取文件后缀
+            string newName = $"{DateTime.Now:yyyyMMddHHmmssfff}{fileName}";//获取文件后缀
             DirectoryInfo info = new DirectoryInfo(cachePath);
             FileInfo[] files = info.GetFiles();//获得下面的所有文件
             if (files == null || files.Length < 1)

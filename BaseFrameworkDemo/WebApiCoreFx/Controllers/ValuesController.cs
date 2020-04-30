@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DBModel.Entity;
+using ILogicLayer.DTO;
+using ILogicLayer.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
@@ -9,6 +13,13 @@ namespace WebApiCoreFx.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IUserService userServ;
+
+        public ValuesController(IUserService userServ)
+        {
+            this.userServ = userServ;
+        }
+
         // GET api/values
         [HttpGet]
         [AllowAnonymous]
@@ -32,9 +43,9 @@ namespace WebApiCoreFx.Controllers
 
         // PUT api/values/5
         [HttpPut]
-        public string Put(int id, string value)
+        public async Task<ResultDTO<TbUser>> Put(int id, string value)
         {
-            return $"{id}_{value}";
+            return await userServ.GetAll(1, 10);
         }
 
         // DELETE api/values/5

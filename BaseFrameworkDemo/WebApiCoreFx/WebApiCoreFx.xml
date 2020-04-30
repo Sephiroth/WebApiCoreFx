@@ -42,6 +42,14 @@
             <param name="value"></param>
             <returns></returns>
         </member>
+        <member name="M:WebApiCoreFx.Ioc.IocExtension.IocAssembly(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+            <summary>
+            基于Microsoft.Extensions.DependencyInjection的AddTransient拓展方法注册程序集
+            </summary>
+            <param name="services"></param>
+            <param name="assemblys"></param>
+            <returns></returns>
+        </member>
         <member name="M:WebApiCoreFx.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             This method gets called by the runtime. Use this method to add services to the container.

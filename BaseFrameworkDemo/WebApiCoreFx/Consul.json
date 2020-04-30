@@ -2,13 +2,12 @@
   "Consul": {
     "IP": "127.0.0.1",
     "Port": "8500"
-
   },
   "Service": {
     "Name": "coreFxAPI",
     "IP": "localhost",
     "Port": 9877
   },
-  "HealthAPI": "localhost",
+  "HealthAPI": "https://localhost:9877/api/Health/Get",
   "AllowedHosts": "*"
 }
