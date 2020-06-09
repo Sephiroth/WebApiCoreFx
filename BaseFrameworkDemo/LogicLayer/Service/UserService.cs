@@ -10,9 +10,9 @@ namespace LogicLayer.Service
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<TbUser> rep;
+        private readonly IRepository<db_cdzContext, TbUser> rep;
 
-        public UserService(IRepository<TbUser> repo)
+        public UserService(IRepository<db_cdzContext, TbUser> repo)
         {
             rep = repo;
         }

@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  webapicorefx:
+    image: ${DOCKER_REGISTRY-}webapicorefx
+    build:
+      context: .
+      dockerfile: BaseFrameworkDemo\WebApiCoreFx\Dockerfile
+    ports:
+      - "9876"

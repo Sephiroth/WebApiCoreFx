@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace EFCoreDBLayer.DAL
 {
-    public class DbRepository<T> : IRepository<T> where T : class, new()
+    public class DbRepository<TDbContext, T> : IRepository<TDbContext, T> where T : class, new() where TDbContext : DbContext
     {
-        private readonly db_cdzContext context;
+        private readonly DbContext context;
 
-        public DbRepository(db_cdzContext context)
+        public DbRepository(TDbContext context)
         {
             this.context = context;
         }
@@ -40,7 +40,7 @@ namespace EFCoreDBLayer.DAL
 
         public async Task<T> GetEntityAsync(Expression<Func<T, bool>> predicate)
         {
-            return await context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+            return await context.Set<T>().Where(predicate).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum)
@@ -54,7 +54,7 @@ namespace EFCoreDBLayer.DAL
             int count = await rs.CountAsync();
             if (count > 0)
             {
-                list = await rs.Skip(firstRow).Take(pageSize).ToListAsync();
+                list = await rs.Skip(firstRow).Take(pageSize).AsNoTracking().ToListAsync();
             }
             sum = count;
             return list ?? default;

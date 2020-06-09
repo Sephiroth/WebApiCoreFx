@@ -14,7 +14,7 @@ namespace Ocelot.ConsulExtensions
     {
         public static IServiceCollection AddOcelotConsul(this IServiceCollection services)
         {
-            services.AddOcelot().AddConsul().AddConfigStoredInConsul().AddPolly();
+            services.AddOcelot().AddConsul().AddConfigStoredInConsul();//.AddPolly();
             return services;
         }
 

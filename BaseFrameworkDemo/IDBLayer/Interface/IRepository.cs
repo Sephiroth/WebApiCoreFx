@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IDBLayer.Interface
 {
-    public interface IRepository<T> where T : class, new()
+    public interface IRepository<TDbContext, T> where T : class, new() where TDbContext : DbContext
     {
         /// <summary>
         /// 批量新增(异步)

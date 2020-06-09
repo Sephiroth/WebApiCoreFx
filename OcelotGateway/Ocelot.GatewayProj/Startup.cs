@@ -12,6 +12,7 @@ using Ocelot.Cache;
 using Ocelot.GatewayProj.Model;
 using DnsClient;
 using Microsoft.Extensions.Options;
+using IdentityServer4.Extensions;
 
 namespace Ocelot.GatewayProj
 {
@@ -37,20 +38,17 @@ namespace Ocelot.GatewayProj
             //从配置文件中获取ServiceDiscovery
             services.Configure<ServiceDisvoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
 
-
             services.AddLogging(logging =>
             {
                 logging.AddConsole();
                 logging.AddDebug();
             });
+
+            //services.AddAuthentication().addJwt
+
             services.AddOcelot()
                 .AddCacheManager(s => { s.WithDictionaryHandle(); })
-                .AddConsul();//.AddTransientDefinedAggregator<FakeDefinedAggregator>()
-            services.AddAuthentication().AddJwtBearer(authenticationProviderKey, s =>
-            {
-            });
-            // 使用自定义缓存
-            //services.AddSingleton<IOcelotCache<CachedResponse>, MyCache>();
+                .AddConsul();
 
             services.AddSingleton<IDnsQuery>(p =>
             {

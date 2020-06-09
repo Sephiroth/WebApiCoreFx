@@ -18,10 +18,10 @@ namespace WebApiCoreFx.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IRepository<TbUser> rep;
+        private readonly IRepository<db_cdzContext, TbUser> rep;
         private readonly IHttpClientFactory clientFactory;
 
-        public LoginController(IRepository<TbUser> rep, IHttpClientFactory clientFactory)
+        public LoginController(IRepository<db_cdzContext, TbUser> rep, IHttpClientFactory clientFactory)
         {
             this.rep = rep;
             this.clientFactory = clientFactory;

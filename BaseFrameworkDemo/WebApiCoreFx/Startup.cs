@@ -74,17 +74,20 @@ namespace WebApiCoreFx
                 });
             });
             #endregion
+
             //services.AddOcelotConsul();
+
             services.AddControllers(options =>
             {
                 options.Filters.Add<HttpGlobalExceptionFilter>();
                 options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
                 options.EnableEndpointRouting = true;//default true
                 //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-            }); // .AddControllersAsServices();使用属性注入而不是构造函数注入，必须加AddControllersAsServices
+            });//.AddControllersAsServices();//使用属性注入而不是构造函数注入，必须加AddControllersAsServices
 
             #region .net core ioc注册
-            services.AddTransient(typeof(IRepository<>), typeof(DbRepository<>));
+            services.AddTransient(typeof(DbContext), typeof(db_cdzContext));
+            services.AddTransient(typeof(IRepository<,>), typeof(DbRepository<,>));
             string[][] assemblys = Configuration.GetSection("IocAssembly").Get<string[][]>();
             foreach (string[] ambs in assemblys)
             {
@@ -152,7 +155,7 @@ namespace WebApiCoreFx
             #region 添加缓存
             services.AddDistributedRedisCache(options =>
             {
-                //用于连接Redis的配置  Configuration.GetConnectionString("RedisConnectionString")读取配置信息的串
+                //用于连接Redis的配置  Configuration.GetConnectionString("RedisConnection")读取配置信息的串
                 options.Configuration = Configuration.GetConnectionString("RedisConnection");//Configuration["Redis:ConnectionString"];
                 //Redis实例名RedisCache
                 options.InstanceName = "RedisCache";
@@ -171,7 +174,7 @@ namespace WebApiCoreFx
                 dbCtxBuilder.UseMySql(Configuration.GetConnectionString("MysqlConnection"))
                     .UseLoggerFactory(DbLoggerFactory)
                     .EnableSensitiveDataLogging();
-            }, 8);
+            }, 18);
             #endregion
 
             #region 中间件

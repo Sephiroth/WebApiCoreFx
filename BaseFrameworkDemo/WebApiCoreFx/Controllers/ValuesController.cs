@@ -11,6 +11,7 @@ namespace WebApiCoreFx.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [AllowAnonymous]
     public class ValuesController : ControllerBase
     {
         private readonly IUserService userServ;
@@ -23,7 +24,7 @@ namespace WebApiCoreFx.Controllers
         // GET api/values
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<string>> Get()
+        public string[] Get()
         {
             return new string[] { "value1", "value2", $"(MiddlewareTest输入处理:{Request.Headers["TestMiddleware"]})" };
         }
