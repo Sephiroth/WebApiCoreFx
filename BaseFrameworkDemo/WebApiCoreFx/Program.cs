@@ -25,7 +25,7 @@ namespace WebApiCoreFx
 
             string[] urls = config.GetSection("StartUpUrls").Get<string[]>();
             IHostBuilder host = Host.CreateDefaultBuilder(args)
-                //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory()) //使用Autofac Ioc
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel()

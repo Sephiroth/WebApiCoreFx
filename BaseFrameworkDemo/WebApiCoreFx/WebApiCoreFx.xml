@@ -50,6 +50,22 @@
             <param name="assemblys"></param>
             <returns></returns>
         </member>
+        <member name="M:WebApiCoreFx.Ioc.IocExtension.IocByAutofac(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+            <summary>
+            仅适用于.net core 3.0之前的版本
+            </summary>
+            <param name="services"></param>
+            <param name="assemblys"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApiCoreFx.Ioc.IocExtension.RegisterAssemblys(Autofac.ContainerBuilder,System.String[])">
+            <summary>
+            通过程序集名称
+            </summary>
+            <param name="builder"></param>
+            <param name="assemblys">两个程序集的名称:0-接口程序集;1-实现程序集</param>
+            <returns></returns>
+        </member>
         <member name="M:WebApiCoreFx.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             This method gets called by the runtime. Use this method to add services to the container.
@@ -57,6 +73,12 @@
             </summary>
             <param name="services"></param>
             <returns>IServiceProvider</returns>
+        </member>
+        <member name="M:WebApiCoreFx.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+            <summary>
+            由Autofac实现Ioc(.Net Core 3.0 + 版本可用)
+            </summary>
+            <param name="builder"></param>
         </member>
         <member name="M:WebApiCoreFx.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>

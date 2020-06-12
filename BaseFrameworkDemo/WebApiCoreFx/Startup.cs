@@ -91,7 +91,13 @@ namespace WebApiCoreFx
             string[][] assemblys = Configuration.GetSection("IocAssembly").Get<string[][]>();
             foreach (string[] ambs in assemblys)
             {
+                #region 使用自定义Ioc方法注册程序集
                 services.IocAssembly(ambs);
+                #endregion
+
+                #region 使用Aoyofac注册程序集
+                //services.IocByAutofac(ambs);
+                #endregion
             }
 
             // 注册单例ArrayPool<T>
@@ -235,6 +241,19 @@ namespace WebApiCoreFx
             //IContainer container = builder.Build();
             //return new AutofacServiceProvider(container);
             #endregion
+        }
+
+        /// <summary>
+        /// 由Autofac实现Ioc(.Net Core 3.0 + 版本可用)
+        /// </summary>
+        /// <param name="builder"></param>
+        public void ConfigureContainer(Autofac.ContainerBuilder builder)
+        {
+            string[][] assemblys = Configuration.GetSection("IocAssembly").Get<string[][]>();
+            foreach (string[] ambs in assemblys)
+            {
+                builder.RegisterAssemblys(ambs);
+            }
         }
 
         /// <summary>

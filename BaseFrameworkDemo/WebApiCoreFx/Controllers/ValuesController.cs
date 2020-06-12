@@ -37,16 +37,16 @@ namespace WebApiCoreFx.Controllers
         [HttpPost]
         [AopDLL.Filter.CustomizeFilter]
         [ValidateAntiForgeryToken]
-        public string Post([FromQuery]string value)
+        public string Post([FromQuery] string value)
         {
             return $"___{value}";
         }
 
         // PUT api/values/5
         [HttpPut]
-        public async Task<ResultDTO<TbUser>> Put(int id, string value)
+        public async Task<ResultDTO<TbUser>> Put(uint pageIndex, uint pageSize)
         {
-            return await userServ.GetAll(1, 10);
+            return await userServ.GetAll((int)pageIndex, (int)pageSize);
         }
 
         // DELETE api/values/5
