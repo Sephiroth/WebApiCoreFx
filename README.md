@@ -29,7 +29,7 @@ EFCore,Dapper,SqlSugar,LinqToDB
 
 ------------------------------------------
 
-### Serging微服务框架参考Demo (已迁出为独立demo)
+### Surging微服务框架参考Demo (已迁出为独立demo)
 .Net Core 2.2 + Surging-1.0.0版本的微服务框架
 
 ------------------------------------------
