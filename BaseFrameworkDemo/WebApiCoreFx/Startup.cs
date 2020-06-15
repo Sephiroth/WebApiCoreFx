@@ -1,6 +1,6 @@
 ﻿using CustomizeMiddleware;
 using DBModel.Entity;
-using EFCoreDBLayer.DAL;
+using EFCoreDBLayer.MySQL.DAL;
 using IDBLayer.Interface;
 using IdentityModel;
 using log4net;

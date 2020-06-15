@@ -1,5 +1,4 @@
-﻿using DBModel.Entity;
-using IDBLayer.Interface;
+﻿using IDBLayer.Interface;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace EFCoreDBLayer.DAL
+namespace EFCoreDBLayer.MySQL.DAL
 {
     public class DbRepository<TDbContext, T> : IRepository<TDbContext, T> where T : class, new() where TDbContext : DbContext
     {

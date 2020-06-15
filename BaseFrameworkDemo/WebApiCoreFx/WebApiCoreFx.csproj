@@ -48,7 +48,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomizeMiddleware\CustomizeMiddleware.csproj" />
-    <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.csproj" />
+    <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.MySQL.csproj" />
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
     <ProjectReference Include="..\ILogicLayer\ILogicLayer.csproj" />
     <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
