@@ -19,12 +19,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MultipleCache.CoreComponent;
+using MultipleCache.CoreComponent.Redis;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
 using WebApiCoreFx.Ioc;
+
 namespace WebApiCoreFx
 {
     public class Startup
@@ -158,7 +161,7 @@ namespace WebApiCoreFx
             });
             #endregion
 
-            #region 添加缓存
+            #region 添加缓存 [Microsoft 官方的Redis和Memory组件]
             services.AddDistributedRedisCache(options =>
             {
                 //用于连接Redis的配置  Configuration.GetConnectionString("RedisConnection")读取配置信息的串
@@ -169,8 +172,13 @@ namespace WebApiCoreFx
             services.AddMemoryCache();
             #endregion
 
-            #region 使用自定义的缓存组件
-
+            #region 自定义特性管控缓存 [使用Microsoft官方的Redis和Memory组件]
+            MultipleCacheAttribute.CacheType = CacheTypeEnum.Redis;
+            MultipleCacheAttribute.RedisOptions = new Microsoft.Extensions.Caching.Redis.RedisCacheOptions
+            {
+                Configuration = Configuration.GetConnectionString("RedisConnection"),//Configuration["Redis:ConnectionString"];
+                InstanceName = "RedisInstance"
+            };
             #endregion
 
             #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)
@@ -354,6 +362,10 @@ namespace WebApiCoreFx
             return info?.FullName ?? directory;
         }
 
+        /// <summary>
+        /// 自定义中间件匹配Header处理
+        /// </summary>
+        /// <param name="app"></param>
         private void HandleBranch(IApplicationBuilder app)
         {
             app.Run(async context =>

@@ -3,6 +3,7 @@ using ILogicLayer.DTO;
 using ILogicLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MultipleCache.CoreComponent.Redis;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace WebApiCoreFx.Controllers
         // GET api/values
         [HttpGet]
         [AllowAnonymous]
+        [MultipleCache]
         public string[] Get()
         {
             return new string[] { "value1", "value2", $"(MiddlewareTest输入处理:{Request.Headers["TestMiddleware"]})" };
@@ -51,8 +53,9 @@ namespace WebApiCoreFx.Controllers
 
         // DELETE api/values/5
         [HttpDelete]
-        public void Delete(int id)
+        public async Task<bool> Delete(string id)
         {
+            return await userServ.DeleteAsync(id);
         }
     }
 }

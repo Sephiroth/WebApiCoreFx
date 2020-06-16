@@ -16,5 +16,7 @@ namespace ILogicLayer.Interface
         Task<bool> UpdateAsync(TbUser user);
 
         Task<ResultDTO<TbUser>> GetAll(int pageIndex, int pageSize);
+
+        Task<bool> DeleteAsync(string id);
     }
 }

@@ -22,6 +22,11 @@ namespace LogicLayer.Service
             return await rep.AddListAsync(list.ToArray());
         }
 
+        public Task<bool> DeleteAsync(string id)
+        {
+            return rep.DeleteAsync(new TbUser { Id = id });
+        }
+
         public async Task<ResultDTO<TbUser>> GetAll(int pageIndex, int pageSize)
         {
             object sum = null;

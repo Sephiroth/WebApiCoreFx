@@ -94,5 +94,11 @@
             </summary>
             <param name="directory"></param>
         </member>
+        <member name="M:WebApiCoreFx.Startup.HandleBranch(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            自定义中间件匹配Header处理
+            </summary>
+            <param name="app"></param>
+        </member>
     </members>
 </doc>
