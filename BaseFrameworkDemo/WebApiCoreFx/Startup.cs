@@ -169,6 +169,10 @@ namespace WebApiCoreFx
             services.AddMemoryCache();
             #endregion
 
+            #region 使用自定义的缓存组件
+
+            #endregion
+
             #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)
             /* Pomelo.EntityFrameworkCore.MySql和MySql.Data.EntityFrameworkCore两个包
              * 和 db_cdzContext的OnConfiguring方法optionsBuilder.UseMySQL保持同步
@@ -262,9 +266,7 @@ namespace WebApiCoreFx
         /// <param name="app"></param>
         /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app,
-            IWebHostEnvironment env,
-            ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddProvider(LoggerProvider);
             if (env.IsDevelopment())
