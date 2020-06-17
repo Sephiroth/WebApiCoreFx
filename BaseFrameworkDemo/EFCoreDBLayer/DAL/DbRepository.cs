@@ -37,25 +37,32 @@ namespace EFCoreDBLayer.MySQL.DAL
             //return await context.Database.ExecuteSqlCommandAsync(sql, parameters);
         }
 
-        public async Task<T> GetEntityAsync(Expression<Func<T, bool>> predicate)
+        public async Task<T> GetEntityAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, T>> selector = null)
         {
-            return await context.Set<T>().Where(predicate).AsNoTracking().FirstOrDefaultAsync();
+            return await context.Set<T>().Where(predicate).SelectEntity(selector).AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, int firstRow, int pageSize, object sum)
+        public async Task<List<T>> GetListAsync<Key>(Expression<Func<T, bool>> predicate, int firstRow, int count, object sum,
+            Expression<Func<T, Key>> keyExpression = null, string sequenceDirection = "ESC", Expression<Func<T, T>> selector = null)
         {
             List<T> list = null;
-            IQueryable<T> rs = context.Set<T>().AsQueryable();
+            IQueryable<T> query = context.Set<T>().AsQueryable();
             if (predicate != null)
             {
-                rs = rs.Where(predicate);
+                query = query.Where(predicate);
             }
-            int count = await rs.CountAsync();
+            sum = await query.CountAsync();
             if (count > 0)
             {
-                list = await rs.Skip(firstRow).Take(pageSize).AsNoTracking().ToListAsync();
+                if (keyExpression != null)
+                {
+                    if (string.Equals(sequenceDirection, "ESC"))
+                        query = query.OrderBy(keyExpression);
+                    else
+                        query = query.OrderByDescending(keyExpression);
+                }
+                list = await query.SelectEntity(selector).Skip(firstRow).Take(count).AsNoTracking().ToListAsync();
             }
-            sum = count;
             return list ?? default;
         }
 
@@ -68,6 +75,19 @@ namespace EFCoreDBLayer.MySQL.DAL
         public async Task<List<T>> QueryAsync([NotNull] string sql, params object[] parameters)
         {
             return await context.Set<T>().FromSqlRaw(sql, parameters).ToListAsync();
+        }
+
+    }
+
+    /// <summary>
+    /// 自定义拓展
+    /// </summary>
+    public static class QueryableExtension
+    {
+        public static IQueryable<T> SelectEntity<T>(this IQueryable<T> query, Expression<Func<T, T>> selector = null)
+        {
+            if (selector != null) { query = query.Select(selector); }
+            return query;
         }
     }
 }

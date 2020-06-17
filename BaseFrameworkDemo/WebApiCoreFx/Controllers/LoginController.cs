@@ -72,7 +72,7 @@ namespace WebApiCoreFx.Controllers
             {
                 return ValidationProblem("可能未绑定手机号");
             }
-            TbUser user = await rep.GetEntityAsync(s => s.Phone.Equals(phone));
+            TbUser user = await rep.GetEntityAsync(s => s.Phone.Equals(phone),s=>new TbUser { State=s.State });
             if (user == null)
             {
                 return ValidationProblem("用户未注册");
