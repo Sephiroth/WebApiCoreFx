@@ -3,7 +3,7 @@
 //using IDBLayer.Interface;
 using System.Reflection;
 
-namespace WebApiCoreFx.Injection
+namespace WebApiCoreFx.Ioc
 {
     public class Evolution : Autofac.Module
     {

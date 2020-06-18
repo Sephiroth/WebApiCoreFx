@@ -7,6 +7,9 @@ namespace EncryptionTool.OpenSsl
 {
     public class RSACryptoService
     {
+        public static RSACryptoService RSAInstance { get; private set; }
+        private static readonly object lockObj = new object();
+
         /// <summary>
         /// s私钥
         /// </summary>
@@ -15,6 +18,15 @@ namespace EncryptionTool.OpenSsl
         /// 公钥
         /// </summary>
         private readonly RSACryptoServiceProvider _publicKeyRsaProvider;
+
+        private string rsaPublicKey;
+        public string RsaPublicKey
+        {
+            get
+            {
+                return rsaPublicKey ??= Convert.ToBase64String(_publicKeyRsaProvider.ExportRSAPublicKey());
+            }
+        }
 
         public RSACryptoService(string privateKey, string publicKey = null)
         {
@@ -25,6 +37,17 @@ namespace EncryptionTool.OpenSsl
             if (!string.IsNullOrEmpty(publicKey))
             {
                 _publicKeyRsaProvider = CreateRsaProviderFromPublicKey(publicKey);
+            }
+        }
+
+        public static void InitInstance(string privateKey, string publicKey = null)
+        {
+            if (RSAInstance == null)
+            {
+                lock (lockObj)
+                {
+                    RSAInstance ??= new RSACryptoService(privateKey, publicKey);
+                }
             }
         }
 
@@ -57,7 +80,8 @@ namespace EncryptionTool.OpenSsl
             using RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
             RSAParameters RSAparams = new RSAParameters();
 
-            using BinaryReader binr = new BinaryReader(new MemoryStream(privateKeyBits));
+            using MemoryStream mStream = new MemoryStream(privateKeyBits);
+            using BinaryReader binr = new BinaryReader(mStream);
             ushort twobytes = binr.ReadUInt16();
             if (twobytes == 0x8130)
                 binr.ReadByte();

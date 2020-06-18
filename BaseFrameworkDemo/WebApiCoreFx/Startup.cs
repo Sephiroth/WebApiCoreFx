@@ -46,6 +46,8 @@ namespace WebApiCoreFx
             LoggerProvider = new Log4NetProvider("Log4net.config");
             symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").GetValue<string>("SymmetricKey")));
 
+            //EncryptionTool.OpenSsl.RSACryptoService.InitInstance(Configuration["OpenSSL:PrivateKey"], Configuration["OpenSSL:PublicKey"]);
+
             DbLoggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddFilter((category, level) =>
