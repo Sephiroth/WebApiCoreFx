@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Castle.Core.Internal;
 using Castle.DynamicProxy.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,31 +12,41 @@ namespace WebApiCoreFx.Ioc
     public static class IocExtension
     {
         /// <summary>
-        /// 基于Microsoft.Extensions.DependencyInjection的AddTransient拓展方法注册程序集
+        /// 基于Microsoft.Extensions.DependencyInjection的拓展方法注册程序集
         /// </summary>
         /// <param name="services"></param>
         /// <param name="assemblys"></param>
+        /// <param name="serviceLifetime"></param>
         /// <returns></returns>
-        public static IServiceCollection IocAssembly(this IServiceCollection services, string[] assemblys)
+        public static IServiceCollection IocAssembly(this IServiceCollection services, string[] assemblys, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         {
-            if (assemblys != null
-                && assemblys.Length == 2
-                && !assemblys[0].Equals(assemblys[1]))
+            if (assemblys != null && assemblys.Length == 2
+                && !string.Equals(assemblys[0], assemblys[1], StringComparison.OrdinalIgnoreCase))
             {
                 Assembly interfaceAmb = Assembly.Load(assemblys[0]);
                 Assembly implAmb = Assembly.Load(assemblys[1]);
-                var typesInterface = interfaceAmb.GetTypes();
-                var typesImpl = implAmb.GetTypes();
+                Type[] typesInterface = interfaceAmb.GetTypes();
+                Type[] typesImpl = implAmb.GetTypes();
 
                 foreach (Type item in typesInterface)
                 {
-                    foreach (Type impl in typesImpl)
+                    Type impl = typesImpl.Find(s => s.GetAllInterfaces().Contains(item));
+                    if (impl != null)
                     {
-                        bool? hadObj = impl.GetAllInterfaces()?.Contains(item);
-                        if (hadObj.HasValue && hadObj.Value)
+                        switch (serviceLifetime)
                         {
-                            services.AddTransient(item, impl);
+                            case ServiceLifetime.Transient:
+                                services.AddTransient(item, impl);
+                                break;
+                            case ServiceLifetime.Scoped:
+                                services.AddScoped(item, impl);
+                                break;
+                            case ServiceLifetime.Singleton:
+                                services.AddSingleton(item, impl);
+                                break;
+                            default: break;
                         }
+
                     }
                 }
             }
