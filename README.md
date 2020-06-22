@@ -24,6 +24,7 @@ WebApiCoreFx:(dotnet core3.1 + EFCore + Autofac + AspectCore + Log4net + Redis +
 <br>
 7.优化EFCore.MySql自定义泛型仓储:<br>
     +字段排序; +查询字段选择; (亲测OK)
+8.加EncryptionTool.OpenSsl.RSAOpenSslTool,简单RSA加密解密组件;api/Security/GetRSAPublicKey获取公钥<br>
 
 ------------------------------------------
 
