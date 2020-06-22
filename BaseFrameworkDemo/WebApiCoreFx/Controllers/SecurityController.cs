@@ -41,9 +41,7 @@ namespace WebApiCoreFx.Controllers
         [HttpGet]
         public Task<string> GetRSAPublicKey()
         {
-            string s1 = EncryptionTool.OpenSsl.RSACryptoService.RSAInstance.Encrypt("你好");
-            string s2 = EncryptionTool.OpenSsl.RSACryptoService.RSAInstance.Decrypt(s1);
-            return Task.FromResult(EncryptionTool.OpenSsl.RSACryptoService.RSAInstance.RsaPublicKey);
+            return Task.FromResult(EncryptionTool.OpenSsl.RSAOpenSslTool.INSTANCE.PublicKey);
         }
     }
 }
