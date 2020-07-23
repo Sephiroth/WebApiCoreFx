@@ -1,6 +1,7 @@
 ﻿using IDBLayer.Interface;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +71,23 @@ namespace EFCoreDBLayer.MySQL.DAL
         {
             context.Set<T>().UpdateRange(list);
             return await context.SaveChangesAsync() == list.Length;
+        }
+
+        public async Task<bool> ModifyAsync([NotNull] T t, Expression<Func<T, object>>[] updateProperties = null)
+        {
+            EntityEntry<T> entity = context.Attach(t);
+            if (updateProperties.Any())
+            {
+                foreach (var property in updateProperties)
+                {
+                    entity.Property(property).IsModified = true;
+                }
+            }
+            else
+            {
+                entity.State = EntityState.Modified;
+            }
+            return await context.SaveChangesAsync() == 1;
         }
 
         public async Task<List<T>> QueryAsync([NotNull] string sql, params object[] parameters)

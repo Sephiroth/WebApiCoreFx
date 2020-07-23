@@ -59,6 +59,14 @@ namespace IDBLayer.Interface
         Task<bool> ModifyAsync([NotNull] params T[] list);
 
         /// <summary>
+        /// 修改单个对象
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="updateProperties"></param>
+        /// <returns></returns>
+        Task<bool> ModifyAsync([NotNull] T t, Expression<Func<T, object>>[] updateProperties = null);
+
+        /// <summary>
         /// sql执行查询
         /// </summary>
         /// <param name="sql"></param>
