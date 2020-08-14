@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace MultipleCache.CoreComponent.Redis
 {
+    /// <summary>
+    /// 自定义ActionFilter实现自动缓存
+    /// </summary>
     public class MultipleCacheAttribute : ActionFilterAttribute
     {
         public static RedisCacheOptions RedisOptions { get; set; }
@@ -90,11 +93,7 @@ namespace MultipleCache.CoreComponent.Redis
             object data = null;
             if (Enum.Equals(CacheType, CacheTypeEnum.Redis))
             {
-                string json = await redisCache?.GetStringAsync(key);
-                if (!string.IsNullOrEmpty(json))
-                {
-                    data = JsonConvert.DeserializeObject(json);
-                }
+                data = await redisCache?.GetStringAsync(key);
             }
             else if (Enum.Equals(CacheType, CacheTypeEnum.Memory))
             {

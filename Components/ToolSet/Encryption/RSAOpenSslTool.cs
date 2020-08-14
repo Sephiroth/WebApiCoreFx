@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace EncryptionTool.OpenSsl
+namespace ToolSet.Encryption
 {
     public class RSAOpenSslTool : IDisposable
     {

@@ -47,7 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Components\EncryptionTool\EncryptionTool.csproj" />
     <ProjectReference Include="..\..\Components\MultipleCache.CoreComponent\MultipleCache.CoreComponent.csproj" />
     <ProjectReference Include="..\CustomizeMiddleware\CustomizeMiddleware.csproj" />
     <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.MySQL.csproj" />

@@ -83,7 +83,7 @@
         </member>
         <member name="M:WebApiCoreFx.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
-            
+            Configure
             </summary>
             <param name="app"></param>
             <param name="env"></param>

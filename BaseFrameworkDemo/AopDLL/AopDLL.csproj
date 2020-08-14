@@ -5,10 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspectCore.Core" Version="2.0.0" />
-    <PackageReference Include="AspectCore.Extensions.Autofac" Version="2.0.0" />
-    <PackageReference Include="AspectCore.Extensions.Configuration" Version="2.0.0" />
-    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="AspectCore.Abstractions" Version="2.1.0" />
+    <PackageReference Include="AspectCore.Core" Version="2.1.0" />
+    <PackageReference Include="AspectCore.Extensions.Autofac" Version="2.1.0" />
+    <PackageReference Include="AspectCore.Extensions.Configuration" Version="2.1.0" />
+    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.3" />

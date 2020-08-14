@@ -23,6 +23,7 @@ using MultipleCache.CoreComponent;
 using MultipleCache.CoreComponent.Redis;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
@@ -100,7 +101,7 @@ namespace WebApiCoreFx
                 services.IocAssembly(ambs);
                 #endregion
 
-                #region 使用Aoyofac注册程序集
+                #region 使用Autofac注册程序集
                 //services.IocByAutofac(ambs);
                 #endregion
             }
@@ -205,6 +206,20 @@ namespace WebApiCoreFx
             services.AddHttpClient();
             //services.AddSession();
 
+            // 响应压缩
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
+                options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+                //options.Providers.Add<CustomCompressionProvider>();
+                options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes
+                    .Concat(new[] { "image/svg+xml" });
+            });
+            services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = System.IO.Compression.CompressionLevel.Fastest;
+            });
+
             #region swagger文档
             services.AddSwaggerGen(option =>
             {
@@ -271,7 +286,7 @@ namespace WebApiCoreFx
         }
 
         /// <summary>
-        /// 
+        /// Configure
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
@@ -295,6 +310,9 @@ namespace WebApiCoreFx
                 o.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             #endregion
+
+            // 响应压缩
+            app.UseResponseCompression();
 
             // 强制使用https重定向
             app.UseHttpsRedirection();
