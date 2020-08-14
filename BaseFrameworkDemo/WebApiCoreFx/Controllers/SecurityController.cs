@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ToolSet.Encryption;
 
 namespace WebApiCoreFx.Controllers
 {
@@ -38,7 +39,7 @@ namespace WebApiCoreFx.Controllers
         [HttpGet]
         public Task<string> GetRSAPublicKey()
         {
-            return Task.FromResult(EncryptionTool.OpenSsl.RSAOpenSslTool.INSTANCE.PublicKey);
+            return Task.FromResult(RSAOpenSslTool.INSTANCE.PublicKey);
         }
     }
 }

@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Components\MultipleCache.CoreComponent\MultipleCache.CoreComponent.csproj" />
+    <ProjectReference Include="..\..\Components\ToolSet\ToolSet.csproj" />
     <ProjectReference Include="..\CustomizeMiddleware\CustomizeMiddleware.csproj" />
     <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.MySQL.csproj" />
     <ProjectReference Include="..\IDBLayer\IDBLayer.csproj" />
