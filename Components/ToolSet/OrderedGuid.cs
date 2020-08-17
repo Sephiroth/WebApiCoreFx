@@ -12,14 +12,16 @@ namespace ToolSet
         /// <summary>
         /// 根据时间 + 指定Order + 随机数生成
         /// </summary>
+        /// <param name="order">指定主机序列</param>
         /// <returns></returns>
-        public static Guid Generate() //mysql(->从左向右顺序)
+        public static Guid Generate(short? order = null) //mysql(->从左向右顺序)
         {
+            order ??= Order;
             byte[] arr = new byte[16];
             byte[] ticks = TicksToBytes();
             Array.Copy(ticks, 0, arr, 0, ticks.Length);
-            arr[8] = (byte)(Order >> 8);
-            arr[9] = (byte)Order;
+            arr[8] = (byte)(order >> 8);
+            arr[9] = (byte)order;
             byte[] gArr = Guid.NewGuid().ToByteArray();
             Array.Copy(gArr, 0, arr, 10, 6);
             return new Guid(arr);
