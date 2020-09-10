@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Castle.Core.Internal;
-using Castle.DynamicProxy.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -30,7 +28,7 @@ namespace WebApiCoreFx.Ioc
 
                 foreach (Type item in typesInterface)
                 {
-                    Type impl = typesImpl.Find(s => s.GetAllInterfaces().Contains(item));
+                    Type impl = typesImpl.FirstOrDefault(s => s.GetInterfaces().Contains(item));
                     if (impl != null)
                     {
                         switch (serviceLifetime)
