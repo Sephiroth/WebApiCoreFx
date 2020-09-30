@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using App.Metrics;
+using DnsClient;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
+using Ocelot.GatewayProj.Filter;
+using Ocelot.GatewayProj.Model;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
-using CacheManager.Core.Utility;
-using Ocelot.Cache.CacheManager;
-using Ocelot.Cache;
-using Ocelot.GatewayProj.Model;
-using DnsClient;
-using Microsoft.Extensions.Options;
-using IdentityServer4.Extensions;
+using Ocelot.Provider.Polly;
+using System;
 
 namespace Ocelot.GatewayProj
 {
@@ -20,14 +22,17 @@ namespace Ocelot.GatewayProj
     {
         public IConfiguration Configuration { get; private set; }
         private string authenticationProviderKey;
+        private bool isOpenMetrics;
 
-        public Startup(IHostingEnvironment env)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
+        public Startup(IConfiguration configuration) // IWebHostEnvironment env
         {
-            var config = new Microsoft.Extensions.Configuration.ConfigurationBuilder();
-            config.SetBasePath(env.ContentRootPath)
-                .AddJsonFile("Ocelot.json")
-                .AddEnvironmentVariables();
-            Configuration = config.Build();
+            //ConfigurationBuilder config = new ConfigurationBuilder();
+            //config.SetBasePath(env.ContentRootPath).AddJsonFile("Ocelot.json").AddEnvironmentVariables();
+            //Configuration = config.Build();
 
             authenticationProviderKey = Configuration["ReRoutes:0:AuthenticationOptions:AuthenticationProviderKey"];
         }
@@ -35,6 +40,25 @@ namespace Ocelot.GatewayProj
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region 跨域
+            services.AddCors(options =>
+            {
+                string[] corsOrigins = Configuration.GetSection("CorsOrigins").Get<string[]>();
+                options.AddPolicy("AllowAll", p =>
+                {
+                    // 允许所有的域名请求 // 允许所有的请求方式GET/POST/PUT/DELETE // 允许所有的头部参数 // 允许携带Cookie
+                    // .AllowAnyOrigin().AllowCredentials()
+                    p.WithOrigins(corsOrigins).AllowAnyMethod().AllowAnyHeader();
+                });
+            });
+            #endregion
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<HttpGlobalExceptionFilter>();
+                options.EnableEndpointRouting = true;
+            });
+
             //从配置文件中获取ServiceDiscovery
             services.Configure<ServiceDisvoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
 
@@ -44,11 +68,10 @@ namespace Ocelot.GatewayProj
                 logging.AddDebug();
             });
 
-            //services.AddAuthentication().addJwt
-
             services.AddOcelot()
                 .AddCacheManager(s => { s.WithDictionaryHandle(); })
-                .AddConsul();
+                .AddConsul()
+                .AddPolly();
 
             services.AddSingleton<IDnsQuery>(p =>
             {
@@ -56,15 +79,65 @@ namespace Ocelot.GatewayProj
                 ServiceDisvoveryOptions serviceConfig = p.GetRequiredService<IOptions<ServiceDisvoveryOptions>>().Value;
                 return new LookupClient(serviceConfig.Consul.DnsEndpoint.ToIPEndPoint());
             });
+
+            #region influxDB的配置 用于存储网关访问数据
+            isOpenMetrics = Configuration.GetValue<bool>("IsOpen");
+            if (isOpenMetrics)
+            {
+                string database = Configuration.GetValue<string>("DatabaseName");
+                string connStr = Configuration.GetValue<string>("ConnectionString");
+                string app = Configuration.GetValue<string>("App");
+                string env = Configuration.GetValue<string>("Env");
+                string username = Configuration.GetValue<string>("UserName");
+                string password = Configuration.GetValue<string>("Password");
+                Uri uri = new Uri(connStr);
+                IMetricsRoot metrics = AppMetrics.CreateDefaultBuilder().Configuration.Configure(options =>
+                {
+                    options.AddAppTag(app);
+                    options.AddEnvTag(env);
+                })
+                    .Report.ToInfluxDb(options =>
+                    {
+                        options.InfluxDb.BaseUri = uri;
+                        options.InfluxDb.Database = database;
+                        options.InfluxDb.UserName = username;
+                        options.InfluxDb.Password = password;
+                        options.HttpPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
+                        options.HttpPolicy.FailuresBeforeBackoff = 5;
+                        options.HttpPolicy.Timeout = TimeSpan.FromSeconds(10);
+                        options.FlushInterval = TimeSpan.FromSeconds(5);
+                    })
+                    .Build();
+
+                services.AddMetrics(metrics);
+                //services.AddMetricsReportScheduler();
+                services.AddMetricsTrackingMiddleware();
+                services.AddMetricsEndpoints();
+            }
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment hostEnvironment)
         {
-            app.UseOcelot().Wait();
+            if (hostEnvironment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
-            //app.UseHttpsRedirection();
-            //app.UseMvc();
+            if (isOpenMetrics)
+            {
+                app.UseMetricsAllEndpoints();
+                app.UseMetricsAllMiddleware();
+            }
+            app.UseCors("AllowAll");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();//.RequireCors("AllowAll");
+                endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
+            });
+
+            app.UseOcelot().Wait();
         }
     }
 }
