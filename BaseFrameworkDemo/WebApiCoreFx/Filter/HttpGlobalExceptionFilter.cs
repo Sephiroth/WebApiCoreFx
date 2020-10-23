@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Reflection;
 
 namespace WebApiCoreFx.Filter
 {
@@ -14,6 +15,8 @@ namespace WebApiCoreFx.Filter
         //    Logger = log4net.LogManager.GetLogger(repository.Name, "NETCorelog4net");
         //}
         #endregion
+
+        //static readonly ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private static readonly ILog logger = LogManager.GetLogger(Startup.LogRep.Name, typeof(Startup));
 
