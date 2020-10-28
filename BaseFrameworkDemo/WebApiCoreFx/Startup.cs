@@ -89,7 +89,12 @@ namespace WebApiCoreFx
                 options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
                 options.EnableEndpointRouting = true;//default true
                 //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-            });//.AddControllersAsServices();//使用属性注入而不是构造函数注入，必须加AddControllersAsServices
+            });
+            //    .AddNewtonsoftJson(options =>
+            //{
+            //    // json序列化首字母大小写问题
+            //    options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+            //});//.AddControllersAsServices();//使用属性注入而不是构造函数注入，必须加AddControllersAsServices
 
             #region .net core ioc注册
             services.AddTransient(typeof(DbContext), typeof(db_cdzContext));
