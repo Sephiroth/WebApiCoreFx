@@ -42,6 +42,11 @@
             <param name="value"></param>
             <returns></returns>
         </member>
+        <member name="T:WebApiCoreFx.Filter.HttpGlobalExceptionFilter">
+            <summary>
+            全局异常过滤器
+            </summary>
+        </member>
         <member name="M:WebApiCoreFx.Ioc.IocExtension.IocAssembly(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[],Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
             <summary>
             基于Microsoft.Extensions.DependencyInjection的拓展方法注册程序集
@@ -66,6 +71,27 @@
             <param name="builder"></param>
             <param name="assemblys">两个程序集的名称:0-接口程序集;1-实现程序集</param>
             <returns></returns>
+        </member>
+        <member name="T:WebApiCoreFx.Startup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:WebApiCoreFx.Startup.DbLoggerFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:WebApiCoreFx.Startup.LoggerProvider">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:WebApiCoreFx.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            
+            </summary>
+            <param name="configuration"></param>
         </member>
         <member name="M:WebApiCoreFx.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>

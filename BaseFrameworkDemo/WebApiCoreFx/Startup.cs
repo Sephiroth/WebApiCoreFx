@@ -31,19 +31,32 @@ using WebApiCoreFx.Ioc;
 
 namespace WebApiCoreFx
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Startup
     {
         private readonly SymmetricSecurityKey symmetricKey;
-        public static ILoggerRepository LogRep { get; set; }
+        //public static ILoggerRepository LogRep { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public static ILoggerFactory DbLoggerFactory { get; private set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public static ILoggerProvider LoggerProvider { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             db_cdzContext.DbConnStr = Configuration.GetConnectionString("MysqlConnection");
-            LogRep = LogManager.CreateRepository("NETCoreRepository");
-            XmlConfigurator.Configure(LogRep, new FileInfo("Log4net.config"));
+            //LogRep = LogManager.CreateRepository("NETCoreRepository");
+            //XmlConfigurator.Configure(LogRep, new FileInfo("Log4net.config"));
             LoggerProvider = new Log4NetProvider("Log4net.config");
             symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").GetValue<string>("SymmetricKey")));
 
