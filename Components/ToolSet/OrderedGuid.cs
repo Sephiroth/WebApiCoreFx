@@ -101,46 +101,130 @@ namespace ToolSet
             }
             return currentTicks;
         }
+
         #endregion
 
-
-        #region 雪花算法
-        private static readonly object snowObj = new object();
-        private static long twepoch = 687888001020L; //唯一时间，这是一个避免重复的随机量，自行设定不要大于当前时间戳
-        private static long workerId=1;
-        private static readonly int workerIdBits = 4; //机器码字节数。4个字节用来保存机器码(定义为Long类型会出现，最大偏移64位，所以左移64位没有意义)
-        private static int sequenceBits = 10; //计数器字节数，10个字节用来保存计数码
-        private static int workerIdShift = sequenceBits; //机器码数据左移位数，就是后面计数器占用的位数
-        private static int timestampLeftShift = sequenceBits + workerIdBits; //时间戳左移动位数就是机器码和计数器总字节数
-        private static long sequence = 0L;
-
-        public static long NextId()
-        {
-            long nextId = 0;
-            lock (snowObj)
-            {
-                long timestamp = GetTimeTick();
-                nextId = (timestamp - (StartDate.HasValue ? StartDate.Value.Ticks : 0) << timestampLeftShift) | workerId << workerIdShift | sequence;
-            }
-            return nextId;
-        }
-        #endregion
-
-
-        static void Main(string[] args)
-        {
-            OrderedGuid.Order = 256;
-            OrderedGuid.StartDate = new DateTime(1970, 1, 1);
-
-            for (int i = 0; i < 100; i++)
-            {
-                //Guid rs = Generate();
-                //var a = GenerateUint64(rs);
-                //Console.WriteLine($"{a} - {rs}");
-                Console.WriteLine(NextId());
-            }
-            Console.ReadLine();
-
-        }
+        //static void Main(string[] args)
+        //{
+        //    OrderedGuid.Order = 256;
+        //    OrderedGuid.StartDate = new DateTime(1970, 1, 1);
+        //    for (int i = 0; i < 1000; i++)
+        //    {
+        //        //Guid rs = Generate();
+        //        //var a = GenerateUint64(rs);
+        //        //Console.WriteLine($"{a} - {rs}");
+        //        //Console.WriteLine(NextId());
+        //    }
+        //    Console.ReadLine();
+        //}
     }
+
+    public class SnowFlake
+    {
+        private static readonly object lockObj = new object();
+        //下面两个每个5位，加起来就是10位的工作机器id
+        public long WorkerId { get; private set; }    //工作id
+        public long DatacenterId { get; private set; }   //数据id
+        public long Sequence { get; private set; } //12位的序列号
+
+        public SnowFlake(long workerId, long datacenterId, long sequence)
+        {
+            if (workerId > maxWorkerId || workerId < 0)
+            {
+                throw new ArgumentException($"worker Id can't be greater than {maxWorkerId} or less than 0");
+            }
+            if (datacenterId > maxDatacenterId || datacenterId < 0)
+            {
+                throw new ArgumentException($"datacenter Id can't be greater than {maxDatacenterId} or less than 0");
+            }
+            WorkerId = workerId;
+            DatacenterId = datacenterId;
+            Sequence = sequence;
+        }
+
+        //初始时间戳
+        private static long twepoch = 537403855732986298L;
+        //长度为5位
+        private static byte workerIdBits = 5;
+        private static byte datacenterIdBits = 5;
+        //最大值
+        private static long maxWorkerId = long.MaxValue;
+        private static long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
+        //序列号id长度
+        private static byte sequenceBits = 12;
+        //序列号最大值
+        private static long sequenceMask = -1L ^ (-1 << sequenceBits);
+        //数据id需要左移位数 12+5=17位
+        private static int datacenterIdShift = sequenceBits + workerIdBits;
+        //时间戳需要左移位数 12+5+5=22位
+        private static int timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+        //上次时间戳，初始值为负数
+        private static long lastTimestamp = -1L;
+        //获取系统时间戳
+        public long GetTimestamp()
+        {
+            return DateTime.Now.Ticks;
+        }
+
+        //下一个ID生成算法
+        public long NextId()
+        {
+            long timestamp;
+            lock (lockObj)
+            {
+                timestamp = GetTimestamp();
+                if (timestamp < lastTimestamp) //获取当前时间戳如果小于上次时间戳，则表示时间戳获取出现异常
+                {
+                    throw new ArgumentException($"当前时间戳Ticks:{timestamp}小于上次时间戳:{lastTimestamp}");
+                }
+                //获取当前时间戳如果等于上次时间戳（同一毫秒内），则在序列号加一；否则序列号赋值为0，从0开始。
+                if (lastTimestamp == timestamp)
+                {
+                    Sequence = (Sequence + 1) & sequenceMask;
+                    if (Sequence == 0)
+                    {
+                        timestamp = NextMillis(lastTimestamp);
+                    }
+                }
+                else { Sequence = 0; }
+                //将上次时间戳值刷新
+                lastTimestamp = timestamp;
+
+                /**
+                  * 返回结果：
+                  * (timestamp - twepoch) << timestampLeftShift) 表示将时间戳减去初始时间戳，再左移相应位数
+                  * (datacenterId << datacenterIdShift) 表示将数据id左移相应位数
+                  * (workerId << workerIdShift) 表示将工作id左移相应位数
+                  * | 是按位或运算符，例如：x | y，只有当x，y都为0的时候结果才为0，其它情况结果都为1。
+                  * 因为个部分只有相应位上的值有意义，其它位上都是0，所以将各部分的值进行 | 运算就能得到最终拼接好的id
+                */
+            }
+            return ((timestamp - twepoch) << timestampLeftShift) |
+                    (DatacenterId << datacenterIdShift) |
+                    (WorkerId << sequenceBits) |
+                    Sequence;
+        }
+
+        //获取时间戳，并与上次时间戳比较
+        private long NextMillis(long lastTimestamp)
+        {
+            long timestamp = GetTimestamp();
+            while (timestamp <= lastTimestamp)
+            {
+                timestamp = GetTimestamp();
+            }
+            return timestamp;
+        }
+
+        static void Main()
+        {
+            var worker = new Snowflake.Core.IdWorker(1, 1);
+            for (int i = 0; i < 1000; i++)
+            {
+                Console.WriteLine(worker.NextId());
+            }
+        }
+
+    }
+
 }

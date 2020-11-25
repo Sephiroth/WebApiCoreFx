@@ -5,13 +5,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     //[Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -20,12 +25,21 @@ namespace WebApiCoreFx.Controllers
         private readonly IUserService userServ;
         private readonly IDistributedCache cache;
         private readonly IMemoryCache memCache;
+        private readonly IServiceProvider serviceProvider;
 
-        public TestController(IUserService userServ, IDistributedCache cache, IMemoryCache memCache)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userServ"></param>
+        /// <param name="serviceProvider"></param>
+        /// <param name="cache"></param>
+        /// <param name="memCache"></param>
+        public TestController(IUserService userServ, IServiceProvider serviceProvider, IDistributedCache cache, IMemoryCache memCache)
         {
             this.userServ = userServ;
             this.cache = cache;
             this.memCache = memCache;
+            this.serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -49,7 +63,7 @@ namespace WebApiCoreFx.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> Post([FromBody]List<TbUser> list)
+        public async Task<ActionResult<bool>> Post([FromBody] List<TbUser> list)
         {
             return await userServ.AddAsync(list);
         }
@@ -73,6 +87,18 @@ namespace WebApiCoreFx.Controllers
                 rsdo = System.Text.Json.JsonSerializer.Deserialize<ResultDTO<TbUser>>(rs);
             }
             return rsdo;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<bool> Test(string name)
+        {
+            using db_cdzContext dbContext = serviceProvider.CreateScope().ServiceProvider.GetService(typeof(db_cdzContext)) as db_cdzContext;
+            return dbContext.Set<TbUser>().AsQueryable().Where(s => s.Name.Equals(name)).Any();
         }
 
     }
