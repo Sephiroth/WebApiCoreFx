@@ -1,0 +1,12 @@
+version: '3'
+services:
+  WebApiCoreFx.dev:
+    build: .
+    image: WebApiCoreFx.dev
+    container_name: WebApiCoreFx.dev
+    volumes:
+      - "/home/logs.dev/WebApiCoreFx:/app/logs"
+      - "/home/filedownload:/app/filedown"
+    restart: always
+    ports: 
+      - "10080:80"

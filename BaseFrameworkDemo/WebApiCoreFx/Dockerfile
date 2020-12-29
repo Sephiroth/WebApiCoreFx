@@ -3,32 +3,10 @@
 #Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
 #For more information, please see https://aka.ms/containercompat
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-nanoserver-1903 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+RUN ln -s /usr/lib/libgdiplus.so /lib/x86_64-linux-gnu/libgdiplus.so
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1903 AS build
-WORKDIR /src
-COPY ["BaseFrameworkDemo/WebApiCoreFx/WebApiCoreFx.csproj", "BaseFrameworkDemo/WebApiCoreFx/"]
-COPY ["BaseFrameworkDemo/EFCoreDBLayer/EFCoreDBLayer.csproj", "BaseFrameworkDemo/EFCoreDBLayer/"]
-COPY ["BaseFrameworkDemo/IDBLayer/IDBLayer.csproj", "BaseFrameworkDemo/IDBLayer/"]
-COPY ["BaseFrameworkDemo/DBModel/DBModel.csproj", "BaseFrameworkDemo/DBModel/"]
-COPY ["BaseFrameworkDemo/WxAppUtil/WxAppUtil.csproj", "BaseFrameworkDemo/WxAppUtil/"]
-COPY ["BaseFrameworkDemo/LogicLayer/LogicLayer.csproj", "BaseFrameworkDemo/LogicLayer/"]
-COPY ["BaseFrameworkDemo/ILogicLayer/ILogicLayer.csproj", "BaseFrameworkDemo/ILogicLayer/"]
-COPY ["BaseFrameworkDemo/AopDLL/AopDLL.csproj", "BaseFrameworkDemo/AopDLL/"]
-COPY ["BaseFrameworkDemo/Ocelot.ConsulExtensions/Ocelot.ConsulExtensions.csproj", "BaseFrameworkDemo/Ocelot.ConsulExtensions/"]
-COPY ["BaseFrameworkDemo/CustomizeMiddleware/CustomizeMiddleware.csproj", "BaseFrameworkDemo/CustomizeMiddleware/"]
-RUN dotnet restore "BaseFrameworkDemo/WebApiCoreFx/WebApiCoreFx.csproj"
 COPY . .
-WORKDIR "/src/BaseFrameworkDemo/WebApiCoreFx"
-RUN dotnet build "WebApiCoreFx.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "WebApiCoreFx.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+EXPOSE 80
+ENV TZ Asia/Shanghai
 ENTRYPOINT ["dotnet", "WebApiCoreFx.dll"]

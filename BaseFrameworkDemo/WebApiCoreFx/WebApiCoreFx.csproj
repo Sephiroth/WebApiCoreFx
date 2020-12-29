@@ -11,7 +11,7 @@
     <StartupObject></StartupObject>
     <OutputType>Exe</OutputType>
     <UserSecretsId>05b77863-43b0-4d97-8be5-bb510d550bf5</UserSecretsId>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <Nullable>disable</Nullable>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
