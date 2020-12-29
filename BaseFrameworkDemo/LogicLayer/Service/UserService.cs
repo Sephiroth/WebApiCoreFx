@@ -20,12 +20,12 @@ namespace LogicLayer.Service
 
         public async Task<bool> AddAsync(List<TbUser> list)
         {
-            return await rep.AddListAsync(list.ToArray());
+            return await rep.AddListAsync(list.ToArray()) == list.Count;
         }
 
-        public Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
-            return rep.DeleteAsync(new TbUser { Id = id });
+            return await rep.DeleteAsync(new TbUser { Id = id }) > 0;
         }
 
         public async Task<ResultDTO<TbUser>> GetAll(int pageIndex, int pageSize)
@@ -53,7 +53,7 @@ namespace LogicLayer.Service
 
         public async Task<bool> UpdateAsync(TbUser user)
         {
-            return await rep.ModifyAsync(user);
+            return await rep.ModifyAsync(user) > 0;
         }
 
     }

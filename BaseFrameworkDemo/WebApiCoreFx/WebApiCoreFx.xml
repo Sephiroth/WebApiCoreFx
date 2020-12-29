@@ -28,11 +28,32 @@
             <param name="respType"></param>
             <returns></returns>
         </member>
+        <member name="T:WebApiCoreFx.Controllers.TestController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:WebApiCoreFx.Controllers.TestController.#ctor(ILogicLayer.Interface.IUserService,System.IServiceProvider,Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+            <summary>
+            
+            </summary>
+            <param name="userServ"></param>
+            <param name="serviceProvider"></param>
+            <param name="cache"></param>
+            <param name="memCache"></param>
+        </member>
         <member name="M:WebApiCoreFx.Controllers.TestController.Get(System.String)">
             <summary>
             查询用户
             </summary>
             <param name="nickName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApiCoreFx.Controllers.TestController.Test(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
             <returns></returns>
         </member>
         <member name="M:WebApiCoreFx.Controllers.ValuesController.Post(System.String)">

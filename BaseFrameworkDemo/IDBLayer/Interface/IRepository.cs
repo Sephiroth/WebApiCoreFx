@@ -14,7 +14,7 @@ namespace IDBLayer.Interface
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        Task<bool> AddListAsync([NotNull] params T[] list);
+        Task<int> AddListAsync([NotNull] params T[] list);
 
         /// <summary>
         /// 获取单个实例(异步)
@@ -42,7 +42,7 @@ namespace IDBLayer.Interface
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<bool> DeleteAsync([NotNull] params T[] list);
+        Task<int> DeleteAsync([NotNull] params T[] list);
 
         /// <summary>
         /// sql执行增/删/改
@@ -56,7 +56,7 @@ namespace IDBLayer.Interface
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<bool> ModifyAsync([NotNull] params T[] list);
+        Task<int> ModifyAsync([NotNull] params T[] list);
 
         /// <summary>
         /// 修改单个对象
@@ -64,7 +64,7 @@ namespace IDBLayer.Interface
         /// <param name="t"></param>
         /// <param name="updateProperties"></param>
         /// <returns></returns>
-        Task<bool> ModifyAsync([NotNull] T t, Expression<Func<T, object>>[] updateProperties = null);
+        Task<int> ModifyAsync([NotNull] T t, Expression<Func<T, object>>[] updateProperties = null);
 
         /// <summary>
         /// sql执行查询

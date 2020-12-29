@@ -19,16 +19,16 @@ namespace EFCoreDBLayer.MySQL.DAL
             this.context = context;
         }
 
-        public async Task<bool> AddListAsync([NotNull] params T[] list)
+        public async Task<int> AddListAsync([NotNull] params T[] list)
         {
             await context.Set<T>().AddRangeAsync(list);
-            return await context.SaveChangesAsync() == list.Length;
+            return await context.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAsync([NotNull] params T[] list)
+        public async Task<int> DeleteAsync([NotNull] params T[] list)
         {
             context.Set<T>().RemoveRange(list);
-            return await context.SaveChangesAsync() == list.Length;
+            return await context.SaveChangesAsync();
         }
 
         public async Task<int> ExecuteSqlAsync([NotNull] FormattableString sql, params object[] parameters)
@@ -67,13 +67,13 @@ namespace EFCoreDBLayer.MySQL.DAL
             return list ?? default;
         }
 
-        public async Task<bool> ModifyAsync([NotNull] params T[] list)
+        public async Task<int> ModifyAsync([NotNull] params T[] list)
         {
             context.Set<T>().UpdateRange(list);
-            return await context.SaveChangesAsync() == list.Length;
+            return await context.SaveChangesAsync();
         }
 
-        public async Task<bool> ModifyAsync([NotNull] T t, Expression<Func<T, object>>[] updateProperties = null)
+        public async Task<int> ModifyAsync([NotNull] T t, Expression<Func<T, object>>[] updateProperties = null)
         {
             EntityEntry<T> entity = context.Attach(t);
             if (updateProperties.Any())
@@ -87,7 +87,7 @@ namespace EFCoreDBLayer.MySQL.DAL
             {
                 entity.State = EntityState.Modified;
             }
-            return await context.SaveChangesAsync() == 1;
+            return await context.SaveChangesAsync();
         }
 
         public async Task<List<T>> QueryAsync([NotNull] string sql, params object[] parameters)
