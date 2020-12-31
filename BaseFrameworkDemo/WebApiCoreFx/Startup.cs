@@ -381,8 +381,6 @@ namespace WebApiCoreFx
                 endpoints.MapControllers();//.RequireCors("AllowAll");
                 endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
             });
-
-            //app.RegisterConsul(Configuration);
         }
 
         /// <summary>

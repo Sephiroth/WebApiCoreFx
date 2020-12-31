@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ocelot.Provider.Consul" Version="16.0.0" />
+    <PackageReference Include="Ocelot.Provider.Polly" Version="16.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ConsulConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
