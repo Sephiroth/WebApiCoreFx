@@ -41,11 +41,12 @@ WebApiCoreFx:(dotnet core3.1 + EFCore + Autofac + AspectCore + Log4net + Redis +
     +字段排序; +查询字段选择; (亲测OK)
 
 ------------------------------------------
-加EncryptionTool.OpenSsl.RSAOpenSslTool,简单RSA加密解密组件;api/Security/GetRSAPublicKey获取公钥<br>
+加EncryptionTool.OpenSsl.RSAOpenSslTool,简单RSA加密解密组件;api/Security/GetRSAPublicKey获取公钥
 
 ------------------------------------------
 
-添加Ocelot.ConsulExtensions组件，用于把服务注册到consul
+添加Ocelot.ConsulExtensions组件，用于把服务注册到consul<br>
+参考UserCenterApi项目的用法
 
 ------------------------------------------
 
