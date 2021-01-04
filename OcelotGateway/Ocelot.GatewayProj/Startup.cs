@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Ocelot.Cache.CacheManager;
+using Ocelot.ConsulExtensions;
 using Ocelot.DependencyInjection;
 using Ocelot.GatewayProj.Filter;
 using Ocelot.GatewayProj.Model;
@@ -68,10 +68,7 @@ namespace Ocelot.GatewayProj
                 logging.AddDebug();
             });
 
-            services.AddOcelot()
-                .AddCacheManager(s => { s.WithDictionaryHandle(); })
-                .AddConsul()
-                .AddPolly();
+            services.AddConsulConsumer();
 
             services.AddSingleton<IDnsQuery>(p =>
             {

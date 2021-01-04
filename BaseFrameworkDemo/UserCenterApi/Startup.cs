@@ -54,11 +54,9 @@ namespace UserCenterApi
                 endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}");
             });
 
-            #region 服务注册和注销(Consul)
             app.UseHealthChecks(serviceOptions.Value.HealthCheck);
             app.UseConsul();
-            #endregion
-
         }
+
     }
 }
