@@ -36,8 +36,8 @@ namespace Ocelot.ConsulExtensions
                 Check = new AgentServiceCheck()
                 {
                     DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(7),  //在7秒未连接上服务之后注销关键服务
-                    Interval = TimeSpan.FromSeconds(2), //每个2秒发送一次心跳检测
-                    Timeout = TimeSpan.FromSeconds(3),  //连接超时时间
+                    Interval = TimeSpan.FromSeconds(serviceOptions.HeartRate), //每个2秒发送一次心跳检测
+                    Timeout = TimeSpan.FromSeconds(serviceOptions.Timeout),  //连接超时时间
                     HTTP = hostinfo.Item1               //心跳检测访问的接口地址，需要自己在项目中写好这个接口
                 }
             };
@@ -94,7 +94,7 @@ namespace Ocelot.ConsulExtensions
                 port = serviceOptions.ServiceUriPort;
             }
             if (string.IsNullOrEmpty(host) || port < 1)
-                throw new Exception("Consul配置未能获取到主机信息，请在consulconfig.json文件中配置");
+                throw new Exception("Consul配置未能获取到主机信息，请在appsettings.json文件中配置");
 
             Console.WriteLine("健康检查地址:" + http);
             return Tuple.Create(http, host, port);
