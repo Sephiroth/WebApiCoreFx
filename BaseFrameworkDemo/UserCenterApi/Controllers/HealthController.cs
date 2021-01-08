@@ -7,6 +7,7 @@ namespace UserCenterApi.Controllers
     [ApiController]
     public class HealthController : ControllerBase
     {
+        [HttpGet]
         public IActionResult Check()
         {
             return Ok(DateTime.Now.ToString());

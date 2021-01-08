@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Ocelot.ConsulExtensions.Interface;
 using Ocelot.ConsulExtensions.Model;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ocelot.ConsulExtensions
 {

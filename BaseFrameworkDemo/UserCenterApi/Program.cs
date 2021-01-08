@@ -14,7 +14,7 @@ namespace UserCenterApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>().UseUrls("https://10.1.72.24:5001", "http://10.1.72.24:5000");
                 });
     }
 }

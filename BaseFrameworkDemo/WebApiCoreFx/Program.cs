@@ -39,7 +39,6 @@ namespace WebApiCoreFx
                     .ConfigureAppConfiguration((hostingContext, builder) =>
                     {
                         builder.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-                        .AddJsonFile("Consul.json")
                         .AddJsonFile("appsettings.json");
                     })
                     .UseStartup<Startup>()

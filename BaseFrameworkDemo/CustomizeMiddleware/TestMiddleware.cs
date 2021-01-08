@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Threading.Tasks;
 
@@ -24,7 +25,22 @@ namespace CustomizeMiddleware
         public async Task InvokeAsync(HttpContext context)
         {
             //context.Request.Headers.Add("TestMiddleware", new Microsoft.Extensions.Primitives.StringValues(DateTime.Now.ToString()));
+            //bool tokenExist = context.Request.Headers.TryGetValue("Token", out StringValues values);
+            //if (tokenExist)
+            //{
+            //    // todo: 验证token通过
+            //    bool pass = false;
+            //    if (pass)
+            //    {
             await _next.Invoke(context);
+            //    }
+            //    // 验证失败:
+            //    context.Response.StatusCode = 404;
+            //}
+            //else
+            //{
+            //    context.Response.StatusCode = 404;
+            //}
             //await context.Response.WriteAsync("(TestMiddleware的输出处理)");
         }
     }

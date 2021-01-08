@@ -1,38 +1,34 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Ocelot.Middleware;
+using Ocelot.Requester;
+using System;
 using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ocelot.GatewayProj
 {
     public class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            IWebHostBuilder builder = new WebHostBuilder();
-            builder.UseKestrel()
-                   .UseContentRoot(Directory.GetCurrentDirectory())
-                   //.ConfigureAppConfiguration((hostingContext, config) =>
-                   //{
-                   //    config
-                   //        .SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-                   //        .AddJsonFile("appsettings.json", true, true)
-                   //        .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true)
-                   //        .AddJsonFile("ocelot.json")
-                   //        .AddJsonFile("NLog.config")
-                   //        .AddEnvironmentVariables();
-                   //})
-                   //.ConfigureServices(s =>
-                   //{
-                   //    s.AddOcelot();
-                   //})
-                   //.ConfigureLogging(logging =>
-                   //{
-                   //    logging.ClearProviders();
-                   //    logging.AddConsole();
-                   //})
-                   .UseStartup<Startup>()
-                   .UseUrls("http://localhost:9000")
-                   .Build()
-                   .Run();
+            CreateHostBuilder(args).Build().Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration(c =>
+            {
+                c.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            })
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
+
     }
 }

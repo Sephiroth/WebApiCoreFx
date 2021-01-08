@@ -48,6 +48,7 @@ namespace WebApiCoreFx.Controllers
         /// <param name="nickName"></param>
         /// <returns></returns>
         [HttpGet]
+        [ApiVersion("1.1")]
         [AopDLL.Filter.CustomizeFilter]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<TbUser>>> Get(string nickName)

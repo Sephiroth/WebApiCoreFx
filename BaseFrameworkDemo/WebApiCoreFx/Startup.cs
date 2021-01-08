@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -95,6 +96,12 @@ namespace WebApiCoreFx
             #endregion
 
             //services.AddOcelotConsul();
+            services.AddApiVersioning(v =>
+            {
+                v.ReportApiVersions = true;
+                v.AssumeDefaultVersionWhenUnspecified = true;
+                v.DefaultApiVersion = new ApiVersion(1, 0);
+            });
 
             services.AddControllers(options =>
             {
@@ -328,6 +335,8 @@ namespace WebApiCoreFx
                 o.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             #endregion
+
+            app.UseTestMiddleware();
 
             // 响应压缩
             app.UseResponseCompression();
