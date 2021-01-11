@@ -13,4 +13,8 @@
 		<PackageReference Include="System.Security.Cryptography.OpenSsl" Version="4.7.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Router\" />
+	</ItemGroup>
+
 </Project>
