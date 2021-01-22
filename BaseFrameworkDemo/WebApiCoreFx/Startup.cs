@@ -82,6 +82,20 @@ namespace WebApiCoreFx
         /// <returns>IServiceProvider</returns>
         public void ConfigureServices(IServiceCollection services) // IServiceProvider
         {
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<HttpGlobalExceptionFilter>();
+                options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
+                options.EnableEndpointRouting = true;//default true
+                //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            }).AddNewtonsoftJson(options =>
+            {
+                //设置时间格式
+                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                // json序列化首字母大小写问题
+                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+            });//.AddControllersAsServices();//使用属性注入而不是构造函数注入，必须加AddControllersAsServices
+
             #region 跨域
             services.AddCors(options =>
             {
@@ -102,19 +116,6 @@ namespace WebApiCoreFx
                 v.AssumeDefaultVersionWhenUnspecified = true;
                 v.DefaultApiVersion = new ApiVersion(1, 0);
             });
-
-            services.AddControllers(options =>
-            {
-                options.Filters.Add<HttpGlobalExceptionFilter>();
-                options.Filters.Add<LogicLayer.Attribute.CustomizeAuthorizationFilter>();
-                options.EnableEndpointRouting = true;//default true
-                //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-            });
-            //    .AddNewtonsoftJson(options =>
-            //{
-            //    // json序列化首字母大小写问题
-            //    options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-            //});//.AddControllersAsServices();//使用属性注入而不是构造函数注入，必须加AddControllersAsServices
 
             #region .net core ioc注册
             services.AddTransient(typeof(DbContext), typeof(db_cdzContext));
@@ -266,7 +267,7 @@ namespace WebApiCoreFx
                     //    //Url = new Uri("https://example.com/license"),
                     //}
                 });
-                //option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
+                option.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebApiCoreFx.xml"));
             });
             #endregion
 

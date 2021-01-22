@@ -24,7 +24,7 @@ namespace Ocelot.ConsulExtensions
 
             Tuple<string, string, int> hostinfo = GetHostInfo(serviceOptions, app);
             // 服务ID，唯一的
-            string serviceId = $"{serviceOptions.ServiceName}_{Guid.NewGuid()}";
+            string serviceId = $"{serviceOptions.ServiceName}_{serviceOptions.ServiceUriHost}:{serviceOptions.ServiceUriPort}";
             //节点服务注册对象
             AgentServiceRegistration registration = new AgentServiceRegistration()
             {

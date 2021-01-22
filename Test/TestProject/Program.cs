@@ -1,7 +1,11 @@
-﻿using MQHelper.RabbitMQ;
+﻿using CSRedis;
+using MQHelper.RabbitMQ;
 using RabbitMQ.Client;
+using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Authentication;
 using System.Text;
 
 namespace TestProject
@@ -10,39 +14,51 @@ namespace TestProject
     {
         static void Main(string[] args)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            for (int i = 0; i < 100; i++)
-                try
-                {
-                    Return();
-                }
-                catch
-                {
-                }
-            sw.Stop();
-            Console.WriteLine("With Return " + sw.ElapsedTicks);
-            sw.Restart();
-            for (int i = 0; i < 100; i++)
-                try
-                {
-                    ThrowTest();
-                }
-                catch
-                {
-                }
-            sw.Stop();
-            Console.WriteLine("With Exception " + sw.ElapsedTicks);
+            List<RabbitMqUtil> rabbits = new List<RabbitMqUtil>(200);
+            for (int i = 0; i < 200; i++)
+            {
+                var rabbit = NewMqClient(i);
+                rabbits.Add(rabbit);
+            }
             Console.ReadLine();
         }
 
-        public static void ThrowTest()
+        public static RabbitMqUtil NewMqClient(int number)
         {
-            throw new Exception("This is exceptopn");
+            RabbitMqUtil rabbit = new RabbitMqUtil();
+            var conn = rabbit.CreateConnection(new ConnectionFactory
+            {
+                HostName = "192.168.1.11",
+                Port = 5676,
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
+                //Protocol = Protocols.DefaultProtocol,
+                AmqpUriSslProtocols = SslProtocols.Tls,
+                AutomaticRecoveryEnabled = true, //自动重连
+                RequestedFrameMax = UInt32.MaxValue,
+                RequestedHeartbeat = TimeSpan.FromSeconds(UInt16.MaxValue) //心跳超时时间
+            });
+            string queue = $"queue{number}";
+            IModel model = rabbit.CreateModel(conn);
+            model.DeclareQueue(queue, "ChatExchange", "", false, false, true);
+            model.AddConsumer(queue, RcvMsg);
+            System.Threading.Tasks.Task.Factory.StartNew(async () =>
+           {
+               for (int i = 0; i < 500; i++)
+               {
+                   byte[] bs = Encoding.UTF8.GetBytes($"我是{queue},第{i}次");
+                   await System.Threading.Tasks.Task.Delay(3000);
+                   model.BasicPublish("ChatExchange", "", false, null, bs);
+               }
+           });
+            return rabbit;
         }
-        public static Boolean Return()
+
+        public static void RcvMsg(object sender, RabbitMQ.Client.Events.BasicDeliverEventArgs args)
         {
-            return false;
+            Console.WriteLine($"{args.ConsumerTag}:{Encoding.UTF8.GetString(args.Body.ToArray())}");
         }
+
     }
 }
