@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQHelper", "Components\MQHe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ocelot.ConsulExtensions", "Components\Ocelot.ConsulExtensions\Ocelot.ConsulExtensions.csproj", "{8A7DA7F1-9F0A-47A0-B493-1F353350B3F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5WebAPI", "BaseFrameworkDemo\Net5WebAPI\Net5WebAPI.csproj", "{EF4731DE-0E8E-49F5-8CA5-95FB78E03EEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,10 @@ Global
 		{8A7DA7F1-9F0A-47A0-B493-1F353350B3F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A7DA7F1-9F0A-47A0-B493-1F353350B3F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A7DA7F1-9F0A-47A0-B493-1F353350B3F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4731DE-0E8E-49F5-8CA5-95FB78E03EEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4731DE-0E8E-49F5-8CA5-95FB78E03EEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4731DE-0E8E-49F5-8CA5-95FB78E03EEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4731DE-0E8E-49F5-8CA5-95FB78E03EEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,6 +160,7 @@ Global
 		{1BDE914E-00A1-4867-B664-71DFBC90245E} = {3B261718-424F-49B1-8E2A-ACC486A04974}
 		{70C9E0DC-71DA-4ED8-AFFA-BB7D4BF6ED97} = {D73C598D-9CB1-4D35-A7C7-3FF8D57D8278}
 		{8A7DA7F1-9F0A-47A0-B493-1F353350B3F1} = {D73C598D-9CB1-4D35-A7C7-3FF8D57D8278}
+		{EF4731DE-0E8E-49F5-8CA5-95FB78E03EEF} = {11542472-2BF1-4DB8-A124-CE15545BF6C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E10A223F-DB86-4F9A-9FCE-B15A7A855840}

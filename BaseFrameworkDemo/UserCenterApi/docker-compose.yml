@@ -1,0 +1,17 @@
+version: '3'
+# networks:
+#  bosi-network:
+#    external: true
+services:
+  UserCenterApi.dev:
+    build: .
+    image: UserCenterApi.dev
+    container_name: UserCenterApi.dev
+#    networks:
+#      - bosi-network
+#    volumes:
+#      - "/home/logs.dev/UserCenterApi:/app/logs"
+#      - "/home/filedownload:/app/filedown"
+    restart: always
+    ports: 
+      - "10080:80"

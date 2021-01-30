@@ -3,9 +3,6 @@ using DBModel.Entity;
 using EFCoreDBLayer.MySQL.DAL;
 using IDBLayer.Interface;
 using IdentityModel;
-using log4net;
-using log4net.Config;
-using log4net.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,8 +17,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MultipleCache.CoreComponent;
-using MultipleCache.CoreComponent.Redis;
 using System;
 using System.IO;
 using System.Linq;
@@ -202,12 +197,12 @@ namespace WebApiCoreFx
             #endregion
 
             #region 自定义特性管控缓存 [使用Microsoft官方的Redis和Memory组件]
-            MultipleCacheAttribute.CacheType = CacheTypeEnum.Redis;
-            MultipleCacheAttribute.RedisOptions = new Microsoft.Extensions.Caching.Redis.RedisCacheOptions
-            {
-                Configuration = Configuration.GetConnectionString("RedisConnection"),//Configuration["Redis:ConnectionString"];
-                InstanceName = "RedisInstance"
-            };
+            //MultipleCacheAttribute.CacheType = CacheTypeEnum.Redis;
+            //MultipleCacheAttribute.RedisOptions = new Microsoft.Extensions.Caching.Redis.RedisCacheOptions
+            //{
+            //    Configuration = Configuration.GetConnectionString("RedisConnection"),//Configuration["Redis:ConnectionString"];
+            //    InstanceName = "RedisInstance"
+            //};
             #endregion
 
             #region EFCore-Mysql的DbContextPool设置(poolSize要比数据库连接池小)

@@ -3,9 +3,6 @@ using ILogicLayer.DTO;
 using ILogicLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MultipleCache.CoreComponent.Redis;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebApiCoreFx.Controllers
@@ -25,7 +22,7 @@ namespace WebApiCoreFx.Controllers
         // GET api/values
         [HttpGet]
         [AllowAnonymous]
-        [MultipleCache]
+        //[MultipleCache]
         public string[] Get()
         {
             return new string[] { "value1", "value2", $"(MiddlewareTest输入处理:{Request.Headers["TestMiddleware"]})" };

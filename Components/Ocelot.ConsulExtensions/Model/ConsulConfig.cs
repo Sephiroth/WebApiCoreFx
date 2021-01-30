@@ -26,15 +26,5 @@
         /// 健康检查的地址，当前服务公布出来的一个api接口
         /// </summary>
         public string HealthCheck { get; set; }
-
-        /// <summary>
-        /// 健康检查 心跳频率
-        /// </summary>
-        public uint HeartRate { get; set; }
-
-        /// <summary>
-        /// 健康检查 超时
-        /// </summary>
-        public uint Timeout { get; set; }
     }
 }

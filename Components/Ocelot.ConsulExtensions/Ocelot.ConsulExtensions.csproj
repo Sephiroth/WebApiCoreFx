@@ -9,10 +9,4 @@
     <PackageReference Include="Ocelot.Provider.Polly" Version="16.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="ConsulConfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
