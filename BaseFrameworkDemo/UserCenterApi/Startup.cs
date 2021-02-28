@@ -32,7 +32,7 @@ namespace UserCenterApi
             #region 注册服务到Consul
             //services.AddConsulConsumer();
             services.AddHealthChecks(); //添加健康检查，.net core自带的
-            services.AddConsulRegister();
+            //services.AddConsulRegister();
             #endregion
 
             #region swagger文档
@@ -92,7 +92,7 @@ namespace UserCenterApi
             });
 
             app.UseHealthChecks(serviceOptions.Value.HealthCheck);
-            app.UseConsul();
+            //app.UseConsul();
         }
 
     }

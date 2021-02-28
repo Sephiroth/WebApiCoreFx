@@ -1,8 +1,8 @@
 echo ==stop==
-docker stop UserCenterApi.dev
+docker stop usercenterapi.dev
 echo ==rm==
-docker rm UserCenterApi.dev
+docker rm usercenterapi.dev
 echo ==rmi==
-docker rmi UserCenterApi.dev
+docker rmi usercenterapi.dev
 echo ==go==
-docker-compose up -d --build UserCenterApi.dev
+docker-compose up -d --build usercenterapi.dev

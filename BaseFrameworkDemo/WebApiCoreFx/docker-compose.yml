@@ -1,12 +1,16 @@
 version: '3'
+networks:
+  mynet:
+    external: true
 services:
-  WebApiCoreFx.dev:
+  webapicorefx:
     build: .
-    image: WebApiCoreFx.dev
-    container_name: WebApiCoreFx.dev
+    image: webapicorefx
+    container_name: webapicorefx
+    networks:
+      - mynet
     volumes:
-      - "/home/logs.dev/WebApiCoreFx:/app/logs"
-      - "/home/filedownload:/app/filedown"
+      - "/home/lut/webapicorefx:/app"
     restart: always
     ports: 
       - "10080:80"
