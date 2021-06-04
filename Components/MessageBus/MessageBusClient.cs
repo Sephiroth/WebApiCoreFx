@@ -105,34 +105,6 @@ namespace MessageBus
             return true;
         }
 
-        static void Main()
-        {
-
-            string myPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "aa.mp3");
-
-            Console.WriteLine("目录名称：{0}", Path.GetDirectoryName(myPath));
-
-            Console.WriteLine("路径扩展名：{0}", Path.GetExtension(myPath));
-
-            Console.WriteLine("文件名：{0}", Path.GetFileName(myPath));
-
-            Console.WriteLine("不带扩展名的名称：{0}", Path.GetFileNameWithoutExtension(myPath));
-
-            Console.WriteLine("绝对全路径：{0}", Path.GetFullPath(myPath));
-
-            Console.WriteLine("根目录：{0}", Path.GetPathRoot(myPath));
-
-            Console.WriteLine("不带根目录的路径：{0}", Path.GetFullPath(myPath).Remove(0, 3));
-
-            Console.ReadKey();
-            Dictionary<string, Action<IReceiveEndpointConfigurator>> dic = new Dictionary<string, Action<IReceiveEndpointConfigurator>>();
-            dic.Add("testQueue", x =>
-            {
-                x.Consumer<MsgConsumer>();
-            });
-            MessageBusClient busClient = new MessageBusClient(MessageBusType.Memory, null, dic);
-        }
-
         class Msg { public string Text { get; set; } }
         class MsgConsumer : IConsumer<Msg>
         {
