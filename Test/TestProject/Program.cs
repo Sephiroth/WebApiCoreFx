@@ -14,14 +14,41 @@ namespace TestProject
     {
         static void Main(string[] args)
         {
-            List<RabbitMqUtil> rabbits = new List<RabbitMqUtil>(200);
-            for (int i = 0; i < 200; i++)
-            {
-                var rabbit = NewMqClient(i);
-                rabbits.Add(rabbit);
-            }
-            Console.ReadLine();
+
         }
+
+        public static int GetMaxArea(byte[] arr)
+        {
+            if (arr.Length == 2)
+            {
+                return arr[0] * arr[1];
+            }
+            int leftIdx = 0;
+            int rightIdx = arr.Length - 1;
+            int maxVal = 0;
+            for (int i = 0; i < arr.Length; i++)
+            {
+                leftIdx = i;
+                int cur = arr[leftIdx] * arr[rightIdx];
+                if (maxVal < cur)
+                {
+                    maxVal = cur;
+                }
+                int pre1 = leftIdx + 1;
+                int pre2 = rightIdx - 1;
+                if (arr[leftIdx] < arr[rightIdx])
+                    leftIdx += 1;
+                else
+                    rightIdx -= 1;
+
+            }
+        }
+        public static int GetMin(int a, int b)
+        {
+            if (a <= b) { return a; }
+            return b;
+        }
+
 
         public static RabbitMqUtil NewMqClient(int number)
         {

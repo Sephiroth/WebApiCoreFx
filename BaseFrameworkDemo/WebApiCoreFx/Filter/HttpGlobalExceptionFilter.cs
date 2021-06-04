@@ -1,6 +1,4 @@
-﻿using log4net;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WebApiCoreFx.Filter
 {

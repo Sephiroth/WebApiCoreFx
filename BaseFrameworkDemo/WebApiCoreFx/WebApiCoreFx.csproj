@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Components\MessageBus\MessageBus.csproj" />
     <ProjectReference Include="..\..\Components\ToolSet\ToolSet.csproj" />
     <ProjectReference Include="..\CustomizeMiddleware\CustomizeMiddleware.csproj" />
     <ProjectReference Include="..\EFCoreDBLayer\EFCoreDBLayer.MySQL.csproj" />

@@ -24,6 +24,10 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiCoreFx.Filter;
 using WebApiCoreFx.Ioc;
+using MassTransit;
+using MassTransit.AspNetCoreIntegration.HealthChecks;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
+using MassTransit.ExtensionsDependencyInjectionIntegration.MultiBus;
 
 namespace WebApiCoreFx
 {
@@ -240,6 +244,29 @@ namespace WebApiCoreFx
             {
                 options.Level = System.IO.Compression.CompressionLevel.Fastest;
             });
+
+            #region MassTransit
+            services.AddMassTransit(configure =>
+            {
+                configure.AddConsumer<model.BusMsgConsumer>();
+                configure.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host("192.168.52.128", 5672, "/", hostConf =>
+                     {
+                         hostConf.Username("guest");
+                         hostConf.Password("guest");
+                         hostConf.Heartbeat(5);
+                         hostConf.RequestedChannelMax(5);
+                         hostConf.RequestedConnectionTimeout(10000);
+                     });
+                    configurator.ReceiveEndpoint("reveiveQueue", e =>
+                    {
+                        e.Consumer<model.BusMsgConsumer>();
+                    });
+                });
+            });
+            services.AddMassTransitHostedService();
+            #endregion
 
             #region swagger文档
             services.AddSwaggerGen(option =>
