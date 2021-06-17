@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Components\MessageBus\MessageBus.csproj" />
     <ProjectReference Include="..\..\Components\MQHelper\MQHelper.csproj" />
   </ItemGroup>
 

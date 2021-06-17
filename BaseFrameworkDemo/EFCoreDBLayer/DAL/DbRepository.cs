@@ -1,4 +1,5 @@
-﻿using IDBLayer.Interface;
+﻿using EFCore.BulkExtensions;
+using IDBLayer.Interface;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -21,7 +22,8 @@ namespace EFCoreDBLayer.MySQL.DAL
 
         public async Task<int> AddListAsync([NotNull] params T[] list)
         {
-            await context.Set<T>().AddRangeAsync(list);
+            //await context.Set<T>().AddRangeAsync(list);
+            await context.BulkInsertAsync(list);
             return await context.SaveChangesAsync();
         }
 

@@ -1,4 +1,5 @@
 ﻿using CSRedis;
+using MassTransit;
 using MQHelper.RabbitMQ;
 using RabbitMQ.Client;
 using StackExchange.Redis;
@@ -12,43 +13,28 @@ namespace TestProject
 {
     class Program
     {
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
-
-        }
-
-        public static int GetMaxArea(byte[] arr)
-        {
-            if (arr.Length == 2)
+            Dictionary<string, Action<MassTransit.IReceiveEndpointConfigurator>> dic = new Dictionary<string, Action<MassTransit.IReceiveEndpointConfigurator>>
             {
-                return arr[0] * arr[1];
-            }
-            int leftIdx = 0;
-            int rightIdx = arr.Length - 1;
-            int maxVal = 0;
-            for (int i = 0; i < arr.Length; i++)
-            {
-                leftIdx = i;
-                int cur = arr[leftIdx] * arr[rightIdx];
-                if (maxVal < cur)
+                { "testQueue", (conf) => { conf.Consumer<MessageBus.MsgConsumer>();} }
+            };
+
+            MessageBus.MessageBusClient client = new MessageBus.MessageBusClient(
+                MessageBus.MessageBusType.ActiveMQ,
+                new MessageBus.ConnectionInfo
                 {
-                    maxVal = cur;
-                }
-                int pre1 = leftIdx + 1;
-                int pre2 = rightIdx - 1;
-                if (arr[leftIdx] < arr[rightIdx])
-                    leftIdx += 1;
-                else
-                    rightIdx -= 1;
+                    IP = "10.1.72.200",
+                    Port = 61616,
+                    User = "admin",
+                    Pwd = "admin"
+                },
+                dic);
+            await client.StartAsync();
+            bool rs = await client.SendAsync("testQueue", new MessageBus.Msg { Text = "汉字随便测试" });
 
-            }
+            Console.ReadLine();
         }
-        public static int GetMin(int a, int b)
-        {
-            if (a <= b) { return a; }
-            return b;
-        }
-
 
         public static RabbitMqUtil NewMqClient(int number)
         {

@@ -9,6 +9,6 @@
         /// <summary>
         /// RabitMQ虚拟主机
         /// </summary>
-        public string VirtualHost { get; set; }
+        public string VirtualHost { get; set; } = "/";
     }
 }

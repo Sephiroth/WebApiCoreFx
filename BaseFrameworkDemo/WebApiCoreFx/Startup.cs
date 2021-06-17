@@ -28,6 +28,8 @@ using MassTransit;
 using MassTransit.AspNetCoreIntegration.HealthChecks;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.ExtensionsDependencyInjectionIntegration.MultiBus;
+using MassTransit.ActiveMqTransport;
+using MessageBus;
 
 namespace WebApiCoreFx
 {
@@ -246,26 +248,7 @@ namespace WebApiCoreFx
             });
 
             #region MassTransit
-            services.AddMassTransit(configure =>
-            {
-                configure.AddConsumer<model.BusMsgConsumer>();
-                configure.UsingRabbitMq((context, configurator) =>
-                {
-                    configurator.Host("192.168.52.128", 5672, "/", hostConf =>
-                     {
-                         hostConf.Username("guest");
-                         hostConf.Password("guest");
-                         hostConf.Heartbeat(5);
-                         hostConf.RequestedChannelMax(5);
-                         hostConf.RequestedConnectionTimeout(10000);
-                     });
-                    configurator.ReceiveEndpoint("reveiveQueue", e =>
-                    {
-                        e.Consumer<model.BusMsgConsumer>();
-                    });
-                });
-            });
-            services.AddMassTransitHostedService();
+            //services.AddMassTransitByActiveMQ(new MessageBus.ConnectionInfo { });
             #endregion
 
             #region swagger文档

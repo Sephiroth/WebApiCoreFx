@@ -104,14 +104,15 @@ namespace MessageBus
             await sendEndpoint.Send(msg);
             return true;
         }
+        
+    }
 
-        class Msg { public string Text { get; set; } }
-        class MsgConsumer : IConsumer<Msg>
+    public class Msg { public string Text { get; set; } }
+    public class MsgConsumer : IConsumer<Msg>
+    {
+        public Task Consume(ConsumeContext<Msg> context)
         {
-            public Task Consume(ConsumeContext<Msg> context)
-            {
-                return Task.Factory.StartNew(() => { Console.WriteLine(context.Message.Text); });
-            }
+            return Task.Factory.StartNew(() => { Console.WriteLine(context.Message.Text); });
         }
     }
 }
