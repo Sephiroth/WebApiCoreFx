@@ -216,15 +216,6 @@ namespace ToolSet
             return timestamp;
         }
 
-        static void Main()
-        {
-            var worker = new Snowflake.Core.IdWorker(1, 1);
-            for (int i = 0; i < 1000; i++)
-            {
-                Console.WriteLine(worker.NextId());
-            }
-        }
-
     }
 
 }

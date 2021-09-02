@@ -22,15 +22,19 @@ namespace ToolSet
         {
             LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
             IScheduler scheduler = await factory.GetScheduler();
-            await scheduler.Start();
+
             IJobDetail job = JobBuilder.Create<MyCustomJob>().WithIdentity("job1", "group1").Build();
             ITrigger trigger = TriggerBuilder.Create().WithIdentity("trigger1", "group1")
                 .StartNow().WithSimpleSchedule(x => x.WithIntervalInSeconds(10).RepeatForever()).Build();
             await scheduler.ScheduleJob(job, trigger);
-            await Task.Delay(TimeSpan.FromSeconds(60));
-            await scheduler.Shutdown();
+            
+
+            await scheduler.Start();
+
+            Console.WriteLine("scheduler is startup");
             Console.WriteLine("Press any key to close the application");
             Console.ReadKey();
+            await scheduler.Shutdown();
         }
 
     }

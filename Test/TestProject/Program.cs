@@ -1,11 +1,7 @@
-﻿using CSRedis;
-using MassTransit;
+﻿using MassTransit;
 using MQHelper.RabbitMQ;
 using RabbitMQ.Client;
-using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security.Authentication;
 using System.Text;
 
@@ -13,27 +9,30 @@ namespace TestProject
 {
     class Program
     {
-        static async System.Threading.Tasks.Task Main(string[] args)
+        static void Main(string[] args)
         {
-            Dictionary<string, Action<MassTransit.IReceiveEndpointConfigurator>> dic = new Dictionary<string, Action<MassTransit.IReceiveEndpointConfigurator>>
-            {
-                { "testQueue", (conf) => { conf.Consumer<MessageBus.MsgConsumer>();} }
-            };
+            var sumary = BenchmarkDotNet.Running.BenchmarkRunner.Run<ToolSetTest>();
 
-            MessageBus.MessageBusClient client = new MessageBus.MessageBusClient(
-                MessageBus.MessageBusType.ActiveMQ,
-                new MessageBus.ConnectionInfo
-                {
-                    IP = "10.1.72.200",
-                    Port = 61616,
-                    User = "admin",
-                    Pwd = "admin"
-                },
-                dic);
-            await client.StartAsync();
-            bool rs = await client.SendAsync("testQueue", new MessageBus.Msg { Text = "汉字随便测试" });
 
-            Console.ReadLine();
+            //Dictionary<string, Action<MassTransit.IReceiveEndpointConfigurator>> dic = new Dictionary<string, Action<MassTransit.IReceiveEndpointConfigurator>>
+            //{
+            //    { "testQueue", (conf) => { conf.Consumer<MessageBus.MsgConsumer>();} }
+            //};
+
+            //MessageBus.MessageBusClient client = new MessageBus.MessageBusClient(
+            //    MessageBus.MessageBusType.ActiveMQ,
+            //    new MessageBus.ConnectionInfo
+            //    {
+            //        IP = "10.1.72.200",
+            //        Port = 61616,
+            //        User = "admin",
+            //        Pwd = "admin"
+            //    },
+            //    dic);
+            //await client.StartAsync();
+            //bool rs = await client.SendAsync("testQueue", new MessageBus.Msg { Text = "汉字随便测试" });
+
+            //Console.ReadLine();
         }
 
         public static RabbitMqUtil NewMqClient(int number)

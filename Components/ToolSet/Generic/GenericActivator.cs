@@ -27,15 +27,4 @@ namespace ToolSet.Generic
         public static readonly Func<T> Create = DynamicModuleLambdaCompiler.GenerateFactory<T>();
     }
 
-    //class Program
-    //{
-    //    static void Main()
-    //    {
-    //        object obj = GetObj<object>();
-    //    }
-    //    static T GetObj<T>() where T : class, new()
-    //    {
-    //        return GenericActivator<T>.Create();
-    //    }
-    //}
 }
